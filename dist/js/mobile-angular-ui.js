@@ -851,14 +851,14 @@ a.active {
   angular.module("mobile-angular-ui.core.activeLinks", [])
 
   .run([
-      '$rootScope', 
-      '$window', 
+      '$rootScope',
+      '$window',
       '$document',
       '$location',
       function($rootScope, $window, $document, $location){
 
         var setupActiveLinks = function() {
-          // Excludes both search part and hash part from 
+          // Excludes both search part and hash part from
           // comparison.
           var url = $location.url(),
               firstHash = url.indexOf('#'),
@@ -874,7 +874,7 @@ a.active {
           } else if (firstSearchMark !== -1 && firstSearchMark > firstHash) {
             newPath = locationHref.slice(0, plainUrlLength + firstSearchMark);
           }
-          
+
           var domLinks = $document[0].links;
           for (var i = 0; i < domLinks.length; i++) {
             var domLink = domLinks[i];
@@ -895,96 +895,96 @@ a.active {
 }());
 
 
-/** 
+/**
  * @module mobile-angular-ui.core.capture
  * @description
- * 
+ *
  * The `capture` module exposes directives to let you extract markup which can be used in other parts of a template using `uiContentFor` and `uiYieldTo` directives.
- * 
+ *
  * It provides a way to move or clone a block of markup to other parts of the document.
- * 
+ *
  * This method is particularly useful to setup parts of the layout within an angular view. Since blocks of html are transplanted within their original `$scope` is easy to create layout interactions depending on the context. Some tipical task you can accomplish with these directives are: _setup the navbar title depending on the view_ or _place a submit button for a form inside a navbar_.
- * 
+ *
  * ## Usage
- * 
+ *
  * Declare it as a dependency to your app unless you have already included some of its super-modules.
- * 
+ *
  * ```
  * angular.module('myApp', ['mobile-angular-ui']);
  * ```
- * 
+ *
  * Or
- * 
+ *
  * ```
  * angular.module('myApp', ['mobile-angular-ui']);
  * ```
- * 
+ *
  * Or
- * 
+ *
  * ```
  * angular.module('myApp', ['mobile-angular-ui.core.capture']);
  * ```
- * 
+ *
  * Use `ui-yield-to` as a placeholder.
- * 
+ *
  * ``` html
  * <!-- index.html -->
- * 
+ *
  * <div class="navbar">
  *   <div ui-yield-to="title" class="navbar-brand">
  *     <span>Default Title</span>
  *   </div>
  * </div>
- * 
+ *
  * <div class="app-body">
  *   <ng-view class="app-content"></ng-view>
  * </div>
  * ```
- * 
+ *
  * Use `ui-content-for` inside any view to populate the `ui-yield-to` content.
- * 
+ *
  * ``` html
  * <!-- myView.html -->
- * 
+ *
  * <div ui-content-for="title">
  *   <span>My View Title</span>
  * </div>
  * ```
- * 
- * Since the original scope is preserved you can use directives inside `ui-content-for` blocks to interact with the current scope. In the following example we will add a navbar button to submit a form inside a nested view.  
- * 
- * 
+ *
+ * Since the original scope is preserved you can use directives inside `ui-content-for` blocks to interact with the current scope. In the following example we will add a navbar button to submit a form inside a nested view.
+ *
+ *
  * ``` html
  * <!-- index.html -->
- * 
+ *
  * <div class="navbar">
  *   <div ui-yield-to="navbarAction">
  *   </div>
  * </div>
- * 
+ *
  * <div class="app-body">
  *   <ng-view class="app-content"></ng-view>
  * </div>
  * ```
- * 
+ *
  * ``` html
  * <!-- newCustomer.html -->
- * 
+ *
  * <form ng-controller="newCustomerController">
- * 
+ *
  *   <div class="inputs">
- *     <input type="text" ng-model="customer.name" />  
+ *     <input type="text" ng-model="customer.name" />
  *   </div>
- * 
+ *
  *   <div ui-content-for="navbarAction">
  *     <button ng-click="createCustomer()">
  *       Save
  *     </button>
  *   </div>
- * 
+ *
  * </form>
  * ```
- * 
+ *
  * ``` javascript
  * app.controller('newCustomerController', function($scope, Store){
  *   $scope.customer = {};
@@ -994,9 +994,9 @@ a.active {
  *   }
  * });
  * ```
- * 
+ *
  * If you wish you can also duplicate markup instead of move it. Just add `duplicate` parameter to `uiContentFor` directive to specify this behaviour.
- * 
+ *
  * ``` html
  * <div ui-content-for="navbarAction" duplicate>
  *   <button ng-click="createCustomer()">
@@ -1011,8 +1011,8 @@ a.active {
    angular.module('mobile-angular-ui.core.capture', [])
 
    .run([
-     'Capture', 
-     '$rootScope', 
+     'Capture',
+     '$rootScope',
      function(Capture, $rootScope) {
        $rootScope.$on('$routeChangeStart', function() {
          Capture.resetAll();
@@ -1021,7 +1021,7 @@ a.active {
    ])
 
    .factory('Capture', [
-     '$compile', 
+     '$compile',
      function($compile) {
        var yielders = {};
 
@@ -1029,11 +1029,11 @@ a.active {
          resetAll: function() {
            for (var name in yielders) {
             if (yielders.hasOwnProperty(name)) {
-              this.resetYielder(name); 
+              this.resetYielder(name);
             }
            }
          },
-         
+
          resetYielder: function(name) {
            var b = yielders[name];
            this.setContentFor(name, b.defaultContent, b.defaultScope);
@@ -1055,7 +1055,7 @@ a.active {
          removeYielder: function(name) {
            delete yielders[name];
          },
-         
+
          setContentFor: function(name, content, scope) {
            var b = yielders[name];
            if (!b) {
@@ -1073,20 +1073,20 @@ a.active {
    * @directive uiContentFor
    * @restrict A
    * @description
-   * 
-   * `ui-content-for` makes inner contents to replace the corresponding 
+   *
+   * `ui-content-for` makes inner contents to replace the corresponding
    * `ui-yield-to` placeholder contents.
    *
    * `uiContentFor` is intended to be used inside a view in order to populate outer placeholders.
    * Any content you send to placeholders via `ui-content-for` is
    * reverted to placeholder defaults after view changes (ie. on `$routeChangeStart`).
-   * 
+   *
    * @param {string} uiContentFor The id of the placeholder to be replaced
    * @param {boolean} uiDuplicate If present duplicates the content instead of moving it (default to `false`)
    *
    */
    .directive('uiContentFor', [
-     'Capture', 
+     'Capture',
      function(Capture) {
        return {
          compile: function(tElem, tAttrs) {
@@ -1112,7 +1112,7 @@ a.active {
     * `ui-yield-to` defines a placeholder which contents will be further replaced by `ui-content-for` directive.
     *
     * Inner html is considered to be a default. Default is restored any time `$routeChangeStart` happens.
-    * 
+    *
     * @param {string} uiYieldTo The unique id of this placeholder.
     *
     */
@@ -1121,11 +1121,11 @@ a.active {
        return {
          link: function(scope, element, attr) {
            Capture.putYielder(attr.uiYieldTo, element, scope, element.html());
-           
+
            element.on('$destroy', function(){
              Capture.removeYielder(attr.uiYieldTo);
            });
-           
+
            scope.$on('$destroy', function(){
              Capture.removeYielder(attr.uiYieldTo);
            });
@@ -1163,13 +1163,13 @@ a.active {
 @module mobile-angular-ui.core.outerClick
 @description
 
-Provides a directive to specifiy a behaviour when click/tap events 
-happen outside an element. This can be easily used 
+Provides a directive to specifiy a behaviour when click/tap events
+happen outside an element. This can be easily used
 to implement eg. __close on outer click__ feature for a dropdown.
 
 ## Usage
 
-Declare it as a dependency to your app unless you have already 
+Declare it as a dependency to your app unless you have already
 included some of its super-modules.
 
 ```
@@ -1196,12 +1196,12 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
   <a ui-turn-on='myDropdown' class='btn'>
     <i class="fa fa-ellipsis-v"></i>
   </a>
-  <ul 
+  <ul
     class="dropdown-menu"
     ui-outer-click="Ui.turnOff('myDropdown')"
     ui-outer-click-if="Ui.active('myDropdown')"
     role="menu"
-    ui-show="myDropdown" 
+    ui-show="myDropdown"
     ui-state="myDropdown"
     ui-turn-off="myDropdown">
 
@@ -1236,13 +1236,13 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
    /**
     * @service bindOuterClick
     * @as function
-    * 
+    *
     * @description
     * This is a service function that binds a callback to be conditionally executed
     * when a click event happens outside a specified element.
     *
     * Ie.
-    * 
+    *
     * ``` js
     * app.directive('myDirective', function('bindOuterClick'){
     *   return {
@@ -1257,7 +1257,7 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
     * });
     * ```
     * @scope {scope} the scope to eval callbacks
-    * @param {DomElement|$element} element The element to bind to. 
+    * @param {DomElement|$element} element The element to bind to.
     * @param {function} callback A `function(scope, options)`, usually the result of `$parse`, that is called when an _outer click_ event happens.
     * @param {string|function} condition Angular `$watch` expression to decide whether to run `callback` or not.
     */
@@ -1265,7 +1265,7 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
      '$document',
      '$timeout',
      function ($document, $timeout) {
-       
+
        return function (scope, element, outerClickFn, outerClickIf) {
          var handleOuterClick = function(event){
            if (!isAncestorOrSelf(angular.element(event.target), element)) {
@@ -1283,14 +1283,14 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
              $timeout.cancel(t);
 
              if (value) {
-               // prevents race conditions 
+               // prevents race conditions
                // activating with other click events
                t = $timeout(function() {
                  $document.on('click tap', handleOuterClick);
                }, 0);
 
              } else {
-               $document.unbind('click tap', handleOuterClick);    
+               $document.unbind('click tap', handleOuterClick);
              }
            });
          } else {
@@ -1309,15 +1309,15 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
 
   /**
    * @directive outerClick
-   * 
+   *
    * @description
    * Evaluates an expression when an _Outer Click_ event happens.
-   * 
+   *
    * @param {expression} uiOuterClick Expression to evaluate when an _Outer Click_ event happens.
    * @param {expression} uiOuterClickIf Condition to enable/disable the listener. Defaults to `true`.
    */
    .directive('uiOuterClick', [
-     'bindOuterClick', 
+     'bindOuterClick',
      '$parse',
      function(bindOuterClick, $parse){
        return {
@@ -1334,7 +1334,7 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
    ]);
 }());
 (function() {
-  'use strict';  
+  'use strict';
   /**
    * @module mobile-angular-ui.core.sharedState
    *
@@ -1359,9 +1359,9 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
    *   <div ui-if="activeTab == 3">Tab3</div>
    * </div>
    * ```
-   * 
+   *
    * Using `SharedState` you will be able to:
-   * 
+   *
    * - Create interactive components without having to write javascript code
    * - Have your controller free from UI logic
    * - Separe `ng-click` triggering application logic from those having a visual effect only
@@ -1371,35 +1371,35 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
    * Also note that:
    *
    * Data structures retaining statuses will stay outside angular scopes
-   * thus they are not evaluated against digest cycle until its necessary. 
-   * Also although statuses are sort of global variables `SharedState` will 
+   * thus they are not evaluated against digest cycle until its necessary.
+   * Also although statuses are sort of global variables `SharedState` will
    * take care of disposing them when no scopes are requiring them anymore.
-   * 
+   *
    * A set of `ui-*` directives are available to interact with `SharedState`
-   * module and will hopefully let you spare your controllers and your time 
+   * module and will hopefully let you spare your controllers and your time
    * for something that is more meaningful than this:
-   * 
+   *
    * ``` js
    * $scope.activeTab = 1;
-   * 
+   *
    * $scope.setActiveTab = function(n) {
    *   $scope.activeTab = n;
    * };
    * ```
-   * 
+   *
    * ## Usage
-   * 
-   * Declare it as a dependency to your app unless you have already included some 
+   *
+   * Declare it as a dependency to your app unless you have already included some
    * of its super-modules.
-   * 
+   *
    * ```
    * angular.module('myApp', ['mobile-angular-ui.core.sharedState']);
    * ```
-   * 
+   *
    * Use `ui-state` directive to require/initialize a state from the target element scope
-   * 
+   *
    * **Example.** Tabs
-   * 
+   *
    * <iframe class='embedded-example' src='/examples/tabs.html'></iframe>
    *
    * **Example.** Custom components
@@ -1407,23 +1407,23 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
    * <iframe class='embedded-example'  src='/examples/lightbulb.html'></iframe>
    *
    * NOTE: `ui-toggle/set/turnOn/turnOff` responds to `click/tap` without stopping propagation so you can use them along with ng-click too. You can also change events to respond to with `ui-triggers` attribute.
-   * 
+   *
    * Any `SharedState` method is exposed through `Ui` object in `$rootScope`. So you could always do `ng-click="Ui.turnOn('myVar')"`.
-   * 
+   *
    * Since `SharedState` is a service you can initialize/set statuses through controllers too:
-   * 
+   *
    * ``` js
    * app.controller('myController', function($scope, SharedState){
    *   SharedState.initialize($scope, "activeTab", 3);
    * });
    * ```
-   * 
-   * As well as you can use `ui-default` for that: 
-   * 
+   *
+   * As well as you can use `ui-default` for that:
+   *
    * ``` html
    * <div class="tabs" ui-state="activeTab" ui-default="thisIsAnExpression(5 + 1 - 2)"></div>
    * ```
-   * 
+   *
    */
   var module = angular.module('mobile-angular-ui.core.sharedState', []);
 
@@ -1432,70 +1432,70 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
    * @class SharedState
    *
    * @description
-   * 
+   *
    * A `SharedState` state can be considered as a global variable identified by an `id`.
-   * 
-   * `SharedState` service exposes methods to interact with statuses to create, read and update states. 
-   * 
+   *
+   * `SharedState` service exposes methods to interact with statuses to create, read and update states.
+   *
    * It acts as a BUS between UI elements to share UI related state that is automatically disposed when all scopes requiring it are destroyed.
-   * 
+   *
    * eg.
-   * 
+   *
    * ``` js
    * app.controller('controller1', function($scope, SharedState){
    *   SharedState.initialize($scope, 'myId');
    * });
-   * 
+   *
    * app.controller('controller2', function(SharedState){
    *   SharedState.toggle('myId');
    * });
    * ```
-   * 
+   *
    * Data structures retaining statuses will stay outside angular scopes thus they are not evaluated against digest cycle until its necessary. Also although statuses are sort of global variables `SharedState` will take care of disposing them when no scopes are requiring them anymore.
-   * 
+   *
    * A set of `ui-*` directives are available to interact with `SharedState` module and will hopefully let you spare your controllers and your time for something that is more meaningful than this:
-   * 
+   *
    * ``` js
    * $scope.activeTab = 1;
-   * 
+   *
    * $scope.setActiveTab = function(n) {
    *   $scope.activeTab = n;
    * };
    * ```
    *
    */
-  
+
    /**
     * @event 'mobile-angular-ui.state.initialized.ID'
     * @shortname initialized
-    * @memberOf mobile-angular-ui.core.sharedState~SharedState 
-    * 
+    * @memberOf mobile-angular-ui.core.sharedState~SharedState
+    *
     * @description
     * Broadcasted on `$rootScope` when `#initialize` is called for a new state not referenced by any scope currently.
-    * 
+    *
     * @param {any} currentValue The value with which this state has been initialized
-    * 
+    *
     * @memberOf mobile-angular-ui.core.sharedState~SharedState
     */
-   
+
    /**
     * @event 'mobile-angular-ui.state.destroyed.ID'
     * @shortname destroyed
     * @memberOf mobile-angular-ui.core.sharedState~SharedState
-    * 
+    *
     * @description
-    * Broadcasted on `$rootScope` when a state is destroyed.         
-    * 
+    * Broadcasted on `$rootScope` when a state is destroyed.
+    *
     */
-   
+
     /**
      * @event 'mobile-angular-ui.state.changed.ID'
      * @shortname changed
      * @memberOf mobile-angular-ui.core.sharedState~SharedState
-     * 
+     *
      * @description
      * Broadcasted on `$rootScope` the value of a state changes.
-     * 
+     *
      * ``` js
      * $scope.$on('mobile-angular-ui.state.changed.uiSidebarLeft', function(e, newVal, oldVal) {
      *   if (newVal === true) {
@@ -1505,11 +1505,11 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
      *   }
      * });
      * ```
-     * 
+     *
      * @param {any} newValue
      * @param {any} oldValue
-     * 
-     */  
+     *
+     */
 
   module.factory('SharedState', [
     '$rootScope',
@@ -1526,20 +1526,20 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
          * @description
          *
          * Initialize, or require if already intialized, a state identified by `id` within the provided `scope`, making it available to the rest of application.
-         * 
+         *
          * A `SharedState` is bound to one or more scopes. Each time `initialize` is called for an angular `scope` this will be bound to the `SharedState` and a reference count is incremented to allow garbage collection.
-         * 
+         *
          * Reference count is decremented once the scope is destroyed. When the counter reach 0 the state will be disposed.
-         * 
+         *
          * @param  {scope} scope The scope to bound this state
-         * @param  {string} id The unique name of this state 
+         * @param  {string} id The unique name of this state
          * @param  {object} [options] Options
          * @param  {object} [options.defaultValue] the initialization value, it is taken into account only if the state `id` is not already initialized
          * @param  {object} [options.exclusionGroup] Specifies an exclusion group for the state. This means that for boolean operations (ie. toggle, turnOn, turnOf) when this state is set to `true`, any other state that is in the same `exclusionGroup` will be set to `false`.
          */
         initialize: function(scope, id, options) {
           options = options || {};
-          
+
           var isNewScope = scopes[scope] === undefined,
               defaultValue = options.defaultValue,
               exclusionGroup = options.exclusionGroup;
@@ -1547,8 +1547,8 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
           scopes[scope.$id] = scopes[scope.$id] || [];
           scopes[scope.$id].push(id);
 
-          if (!statusesMeta[id]) { // is a brand new state 
-                                   // not referenced by any 
+          if (!statusesMeta[id]) { // is a brand new state
+                                   // not referenced by any
                                    // scope currently
 
             statusesMeta[id] = angular.extend({}, options, {references: 1});
@@ -1565,15 +1565,15 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
               exclusionGroups[exclusionGroup][id] = true;
             }
 
-          } else if (isNewScope) { // is a new reference from 
+          } else if (isNewScope) { // is a new reference from
                                    // a different scope
-            statusesMeta[id].references++; 
+            statusesMeta[id].references++;
           }
           scope.$on('$destroy', function(){
             var ids = scopes[scope.$id] || [];
             for (var i = 0; i < ids.length; i++) {
               var status = statusesMeta[ids[i]];
-              
+
               if (status.exclusionGroup) {
                 delete exclusionGroups[status.exclusionGroup][ids[i]];
                 if (Object.keys(exclusionGroups[status.exclusionGroup]).length === 0) {
@@ -1620,16 +1620,16 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
 
         /**
          * @memberOf mobile-angular-ui.core.sharedState~SharedState
-         * 
+         *
          * @function setMany
          * @description
          *
          * Set multiple statuses at once. ie.
-         * 
+         *
          * ```
          * SharedState.setMany({ activeTab: 'firstTab', sidebarIn: false });
          * ```
-         * 
+         *
          * @param {object} object An object of the form `{state1: value1, ..., stateN: valueN}`
          */
         setMany: function(map) {
@@ -1643,12 +1643,12 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
          * @function set
          * @memberOf mobile-angular-ui.core.sharedState~SharedState
          * @description
-         * 
+         *
          * A shorthand for both `setOne` and `setMany`.
-         * When called with only one parameter that is an object 
-         * it is the same of `setMany`, otherwise is the 
+         * When called with only one parameter that is an object
+         * it is the same of `setMany`, otherwise is the
          * same of `setOne`.
-         * 
+         *
          * @param {string|object} idOrMap A state id or a `{state: value}` map object.
          * @param {any} [value] The value to assign in case idOrMap is a string.
          */
@@ -1664,12 +1664,12 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
          * @function turnOn
          * @memberOf mobile-angular-ui.core.sharedState~SharedState
          * @description
-         * 
-         * Set shared state identified by `id` to `true`. If the 
-         * shared state has been initialized with `exclusionGroup` 
-         * option it will also turn off (set to `false`) all other 
+         *
+         * Set shared state identified by `id` to `true`. If the
+         * shared state has been initialized with `exclusionGroup`
+         * option it will also turn off (set to `false`) all other
          * statuses from the same exclusion group.
-         * 
+         *
          * @param  {string} id The unique name of this state
          */
         turnOn: function(id) {
@@ -1690,7 +1690,7 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
         /**
          * @function turnOff
          * @memberOf mobile-angular-ui.core.sharedState~SharedState
-         * 
+         *
          * @description
          * Set shared state identified by `id` to `false`.
          *
@@ -1705,9 +1705,9 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
          * @memberOf mobile-angular-ui.core.sharedState~SharedState
          * @description
          *
-         * If current value for shared state identified by `id` evaluates 
-         * to `true` it calls `turnOff` on it otherwise calls `turnOn`. 
-         * Be aware that it will take into account `exclusionGroup` option. 
+         * If current value for shared state identified by `id` evaluates
+         * to `true` it calls `turnOff` on it otherwise calls `turnOn`.
+         * Be aware that it will take into account `exclusionGroup` option.
          * See `#turnOn` and `#initialize` for more.
          *
          * @param  {string} id The unique name of this state
@@ -1719,7 +1719,7 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
         /**
          * @function get
          * @memberOf mobile-angular-ui.core.sharedState~SharedState
-         * 
+         *
          * @description
          * Returns the current value of the state identified by `id`.
          *
@@ -1749,9 +1749,9 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
          * @alias mobile-angular-ui.core.sharedState~SharedState.isActive
          * @memberOf mobile-angular-ui.core.sharedState~SharedState
          * @description
-         * 
+         *
          * Alias for `#isActive`.
-         * 
+         *
          * @param  {string} id The unique name of this state
          * @returns {bool}
          */
@@ -1763,9 +1763,9 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
          * @function isUndefined
          * @memberOf mobile-angular-ui.core.sharedState~SharedState
          * @description
-         * 
+         *
          * Return `true` if state identified by `id` is not defined.
-         * 
+         *
          * @param  {string} id The unique name of this state
          * @returns {bool}
          */
@@ -1775,10 +1775,10 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
 
         /**
          * Returns `true` if state identified by `id` exsists.
-         * 
+         *
          * @param  {string} id The unique name of this state
          * @returns {bool}
-         * 
+         *
          * @function has
          * @memberOf mobile-angular-ui.core.sharedState~SharedState
          */
@@ -1788,10 +1788,10 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
 
         /**
          * Returns the number of references of a status.
-         * 
+         *
          * @param  {string} id The unique name of this state
          * @returns {integer}
-         * 
+         *
          * @function referenceCount
          * @memberOf mobile-angular-ui.core.sharedState~SharedState
          */
@@ -1805,8 +1805,8 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
          *
          * @param  {string} id The unique name of this state
          * @param  {any} value The value for comparison
-         * @returns {bool} 
-         * 
+         * @returns {bool}
+         *
          * @function equals
          * @memberOf mobile-angular-ui.core.sharedState~SharedState
          */
@@ -1817,11 +1817,11 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
 
         /**
          * Alias for `#equals`
-         * 
+         *
          * @param  {string} id The unique name of this state
          * @param  {any} value The value for comparison
-         * @returns {bool} 
-         * 
+         * @returns {bool}
+         *
          * @function eq
          * @memberOf mobile-angular-ui.core.sharedState~SharedState
          * @alias mobile-angular-ui.core.sharedState~SharedState.equals
@@ -1831,24 +1831,24 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
         },
 
         /**
-         * Returns an object with all the status values currently stored. 
+         * Returns an object with all the status values currently stored.
          * It has the form of `{statusId: statusValue}`.
-         * 
-         * Bear in mind that in order to spare resources it currently 
-         * returns just the internal object retaining statuses values. 
+         *
+         * Bear in mind that in order to spare resources it currently
+         * returns just the internal object retaining statuses values.
          * Thus it is not intended to be modified and direct changes to it will be not tracked or notified.
-         * 
+         *
          * Just clone before apply any change to it.
-         * 
+         *
          * @returns {object}
-         * 
+         *
          * @function values
          * @memberOf mobile-angular-ui.core.sharedState~SharedState
          */
         values: function() {
           return values;
         }
-  
+
       };
     }
   ]);
@@ -1864,10 +1864,10 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
 
   /**
    * Calls `SharedState#initialize` on the scope relative to the element using it.
-   * 
+   *
    * @param {string} uiState The shared state id
    * @param {expression} [uiDefault] the default value
-   * 
+   *
    * @directive uiState
    */
   module.directive('uiState', [
@@ -1890,56 +1890,56 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
     }
   ]);
 
-  angular.forEach(['toggle', 'turnOn', 'turnOff', 'set'], 
+  angular.forEach(['toggle', 'turnOn', 'turnOff', 'set'],
     function(methodName){
       var directiveName = 'ui' + methodName[0].toUpperCase() + methodName.slice(1);
 
       /**
        * Calls `SharedState#toggle` when triggering events happens on the element using it.
-       * 
+       *
        * @param {string} uiToggle the target shared state
        * @param {expression} uiDefault the default value
        *
        * @directive uiToggle
        */
-      
+
       /**
        * @function uiTurnOn
-       * 
+       *
        * @description
        * Calls `SharedState#turnOn` when triggering events happens on the element using it.
        *
-       * 
+       *
        * @ngdoc directive
-       * 
+       *
        * @param {string} uiTurnOn the target shared state
        * @param {expression} uiDefault the default value
        */
 
       /**
        * @function uiTurnOff
-       * 
+       *
        * @description
        * Calls `SharedState#turnOff` when triggering events happens on the element using it.
-       * 
+       *
        * @ngdoc directive
-       * 
+       *
        * @param {string} uiTurnOff the target shared state
        * @param {string} [uiTriggers='click tap'] the event triggering the call.
        */
 
       /**
        * @function uiSet
-       * 
+       *
        * @description
        * Calls `SharedState#set` when triggering events happens on the element using it.
-       * 
+       *
        * @ngdoc directive
-       * 
+       *
        * @param {object} uiSet The object to pass to SharedState#set
        * @param {string} [uiTriggers='click tap'] the event triggering the call.
        */
-      
+
       module.directive(directiveName, [
         '$parse',
         '$interpolate',
@@ -1948,16 +1948,16 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
               var method = SharedState[methodName];
               return {
                 restrict: 'A',
-                priority: 1, // This would make postLink calls happen after ngClick 
+                priority: 1, // This would make postLink calls happen after ngClick
                              // (and similar) ones, thus intercepting events after them.
-                             // 
-                             // This will prevent eventual ng-if to detach elements 
+                             //
+                             // This will prevent eventual ng-if to detach elements
                              // before ng-click fires.
 
                 compile: function(elem, attrs) {
                   var attr = attrs[directiveName];
                   var needsInterpolation = attr.match(/\{\{/);
-                  
+
                   var exprFn = function($scope) {
                     var res = attr;
                     if (needsInterpolation) {
@@ -1965,9 +1965,9 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
                       res = interpolateFn($scope);
                     }
                     if (methodName === 'set') {
-                      res = ($parse(res))($scope);    
+                      res = ($parse(res))($scope);
                     }
-                    return res;                                          
+                    return res;
                   };
 
                   return function(scope, elem, attrs) {
@@ -1985,21 +1985,21 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
 
  /**
   * @name uiScopeContext
-  * @inner 
+  * @inner
   * @description
-  * 
-  * `uiScopeContext` is not a directive, but a parameter common to any of the 
+  *
+  * `uiScopeContext` is not a directive, but a parameter common to any of the
   * `ui-*` directives in this module.
   *
-  * By default all `ui-*` conditions in this module evaluates in the context of 
-  * `SharedState` only, thus scope variable are not accessible. To use them you have 
+  * By default all `ui-*` conditions in this module evaluates in the context of
+  * `SharedState` only, thus scope variable are not accessible. To use them you have
   * two options:
   *
   * #### 1. pre-interpolation
-  * 
+  *
   * You can use pre-interpolation in expression attribute. For instance the following syntax
   * is ligit:
-  * 
+  *
   * ``` html
   * <div ui-if='state{{idx}}'><!-- ... --></div>
   * ```
@@ -2009,25 +2009,25 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
   *
   * This works as expected and is fine for the most cases, but it has a little caveat:
   *
-  * The condition has to be re-parsed at each digest loop and has to walk scopes 
+  * The condition has to be re-parsed at each digest loop and has to walk scopes
   * in watchers.
   *
   * #### 2. uiScopeContext
   *
-  * If you are concerned about performance issues using the first approach 
-  * `uiScopeContext` is a more verbose but also lightweight alternative 
+  * If you are concerned about performance issues using the first approach
+  * `uiScopeContext` is a more verbose but also lightweight alternative
   * to accomplish the same.
-  *  
+  *
   * It allows to use current scope vars inside `ui-*` conditions, leaving
   * other scope vars (or the entire scope if not present) apart from the
   * condition evaluation process.
-  * 
-  * Hopefully this will keep evaluation running against a flat and small data 
-  * structure instead of taking into account the whole scope. 
-  * 
+  *
+  * Hopefully this will keep evaluation running against a flat and small data
+  * structure instead of taking into account the whole scope.
+  *
   * It is a list `scopeVar[ as aliasName] [, ...]` specifing one of more scope
   * variables to take into account when evaluating conditions. ie:
-  * 
+  *
   * ``` html
   * <!-- use item from ng-repeat -->
   * <div ui-if="openPanel == i" ui-scope-context='i' ng-repeat="i in [1,2,3]">
@@ -2036,18 +2036,18 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
   *   </div>
   * </div>
   * ```
-  * 
+  *
   * ``` html
   * <div ui-if="sharedState1 == myVar1 && sharedState2 == myVar2"
   *   ui-scope-context="myVar1, myVar2"
   * >
   * </div>
   * ```
-  * 
+  *
   * Be aware that scope vars will take precedence over sharedStates so,
   * in order to avoid name clashes you can use 'as' to refer to scope vars
   * with a different name in conditions:
-  * 
+  *
   * ``` html
   * <div ui-if="x == myVar1 && y == myVar2"
   *   ui-scope-context="x as myVar1, y as myVar2"
@@ -2099,7 +2099,7 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
       var context;
       if (uiScopeContext.length) {
         context = angular.extend({}, SharedState.values());
-        mixScopeContext(context, uiScopeContext, $scope);  
+        mixScopeContext(context, uiScopeContext, $scope);
       } else {
         context = SharedState.values();
       }
@@ -2107,17 +2107,17 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
     };
   };
 
-  
+
  /**
   * @ngdoc directive
   * @function uiIf
-  * 
-  * @description 
+  *
+  * @description
   * Same as `ngIf` but evaluates condition against `SharedState` statuses too
-  * 
+  *
   * @param {expression} uiIf A condition to decide wether to attach the element to the dom
   * @param {list} [uiScopeContext] A list `scopeVar[ as aliasName] [, ...]` specifing one of more scope variables to take into account when evaluating condition.
-  */ 
+  */
   module.directive('uiIf', ['$animate', 'SharedState', '$parse', '$interpolate', function($animate, SharedState, $parse, $interpolate) {
     function getBlockNodes(nodes) {
       var node = nodes[0];
@@ -2140,7 +2140,7 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
       restrict: 'A',
       $$tlb: true,
       link: function ($scope, $element, $attr, ctrl, $transclude) {
-          var block, childScope, previousElements, 
+          var block, childScope, previousElements,
           uiIfFn = parseUiCondition('uiIf', $attr, $scope, SharedState, $parse, $interpolate);
 
           $scope.$watch(uiIfFn, function uiIfWatchAction(value) {
@@ -2184,17 +2184,17 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
     };
   }]);
 
-  
+
   /**
-   * @ngdoc directive 
+   * @ngdoc directive
    * @function uiHide
-   * 
+   *
    * @description
    * Same as `ngHide` but evaluates condition against `SharedState` statuses
-   * 
+   *
    * @param {expression} uiShow A condition to decide wether to hide the element
    * @param {list} [uiScopeContext] A list `scopeVar[ as aliasName] [, ...]` specifing one of more scope variables to take into account when evaluating condition.
-   */ 
+   */
   module.directive('uiHide', ['$animate', 'SharedState', '$parse', '$interpolate', function($animate, SharedState, $parse, $interpolate) {
     var NG_HIDE_CLASS = 'ng-hide';
     var NG_HIDE_IN_PROGRESS_CLASS = 'ng-hide-animate';
@@ -2214,15 +2214,15 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
   }]);
 
   /**
-   * @ngdoc directive 
+   * @ngdoc directive
    * @function uiShow
-   * 
+   *
    * @description
    * Same as `ngShow` but evaluates condition against `SharedState` statuses
-   * 
+   *
    * @param {expression} uiShow A condition to decide wether to show the element
    * @param {list} [uiScopeContext] A list `scopeVar[ as aliasName] [, ...]` specifing one of more scope variables to take into account when evaluating condition.
-   */ 
+   */
   module.directive('uiShow', ['$animate', 'SharedState', '$parse', '$interpolate', function($animate, SharedState, $parse) {
     var NG_HIDE_CLASS = 'ng-hide';
     var NG_HIDE_IN_PROGRESS_CLASS = 'ng-hide-animate';
@@ -2242,15 +2242,15 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
   }]);
 
   /**
-   * @ngdoc directive 
+   * @ngdoc directive
    * @function uiClass
-   * 
+   *
    * @description
    * A simplified version of `ngClass` that evaluates in context of `SharedState`, it only suppors the `{'className': expr}` syntax.
-   * 
+   *
    * @param {expression} uiClass An expression that has to evaluate to an object of the form `{'className': expr}`, where `expr` decides wether the class should appear to element's class list.
    * @param {list} [uiScopeContext] A list `scopeVar[ as aliasName] [, ...]` specifing one of more scope variables to take into account when evaluating condition.
-   */ 
+   */
   module.directive('uiClass', ['SharedState', '$parse', '$interpolate', function(SharedState, $parse) {
     return {
       restrict: 'A',
@@ -2268,7 +2268,7 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
             classesToAdd = classesToAdd.trim();
             classesToRemove = classesToRemove.trim();
             if (classesToAdd.length) {
-              element.addClass(classesToAdd);  
+              element.addClass(classesToAdd);
             }
             if (classesToRemove.length) {
               element.removeClass(classesToRemove);
@@ -2291,13 +2291,13 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
 }());
 
 /**
- * Provides directives and service to prevent touchmove default behaviour 
+ * Provides directives and service to prevent touchmove default behaviour
  * for touch devices (ie. bounce on overscroll in IOS).
  *
  * #### Usage
  *
  * Use `ui-prevent-touchmove-defaults` directive on root element of your app:
- * 
+ *
  * ``` html
  * <body ng-app='myApp' ui-prevent-touchmove-defaults>
  *   <!-- ... -->
@@ -2306,9 +2306,9 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
  *
  * Doing so `touchmove.preventDefault` logic for inner elements is inverted,
  * so any `touchmove` default behaviour is automatically prevented.
- * 
- * If you wish to allow the default behaviour, for example to allow 
- * inner elements to scroll, you have to explicitly mark an event to allow 
+ *
+ * If you wish to allow the default behaviour, for example to allow
+ * inner elements to scroll, you have to explicitly mark an event to allow
  * touchmove default.
  *
  * Mobile Angular UI already handles this for `scrollable` elements, so you don't have
@@ -2318,19 +2318,19 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
  * you can use the `allowTouchmoveDefault` service.
  *
  * ie.
- * 
+ *
  * ``` js
  * // always allow touchmove default for an element
  * allowTouchmoveDefault(myelem);
  * ```
- * 
+ *
  * ``` js
  * // allow touchmove default for an element only under certain conditions
  * allowTouchmoveDefault(myelem, function(touchmove){
  *   return touchmove.pageY > 100;
  * });
  * ```
- * 
+ *
  * @module mobile-angular-ui.core.touchmoveDefaults
  */
 (function () {
@@ -2339,7 +2339,7 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
 
   module.directive('uiPreventTouchmoveDefaults', function() {
     var preventTouchmoveDefaultsCb = function(e) {
-      if (e.allowTouchmoveDefault !== true) {
+      if (e.originalEvent.allowTouchmoveDefault !== true) {
         e.preventDefault();
       }
     };
@@ -2356,14 +2356,14 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
   /**
    * Bind a listener to an element to allow `touchmove` default behaviour
    * when `touchmove` happens inside the bound element.
-   * 
-   * You can also provide a function to decide when to allow and 
+   *
+   * You can also provide a function to decide when to allow and
    * when to prevent it.
    *
    * ``` js
    * // always allow touchmove default
    * allowTouchmoveDefault(myelem);
-   * 
+   *
    * // allow touchmove default only under certain conditions
    * allowTouchmoveDefault(myelem, function(touchmove){
    *   return touchmove.pageY > 100;
@@ -2372,13 +2372,13 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
    *
    * @param {Element|$element} element The element to bind.
    * @param {function} condition A `function(touchmove)⟶boolean` to decide
-   *                             whether to allow default behavior or not. 
-   * 
+   *                             whether to allow default behavior or not.
+   *
    * @service allowTouchmoveDefault
    * @as function
    * @returns function Function to unbind the listener
    */
-  
+
   module.factory('allowTouchmoveDefault', function(){
     var fnTrue = function() { return true; };
 
@@ -2387,7 +2387,7 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
           condition = condition || fnTrue;
 
           var allowTouchmoveDefaultCallback = function(e) {
-            if (condition(e)) { e.allowTouchmoveDefault = true; }
+            if (condition(e)) { e.originalEvent.allowTouchmoveDefault = true; }
           };
 
           $element = angular.element($element);
@@ -2400,7 +2400,7 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
 
           return function() {
             if ($element) {
-              $element.off('touchmove', allowTouchmoveDefaultCallback);              
+              $element.off('touchmove', allowTouchmoveDefaultCallback);
             }
           };
         };
@@ -2416,8 +2416,8 @@ Use `ui-outer-click-if` parameter to define a condition to enable/disable the li
 
 @description
 
-It has all the core functionalities of Mobile Angular UI. It aims to act as a common base 
-for an UI framework providing services and directives to create components and implement 
+It has all the core functionalities of Mobile Angular UI. It aims to act as a common base
+for an UI framework providing services and directives to create components and implement
 UI interactions with angular.
 
 <div class="alert alert-success">
@@ -2452,23 +2452,23 @@ angular.module('myApp', ['mobile-angular-ui.core']);
 }());
 /*! Overthrow. An overflow:auto polyfill for responsive design. (c) 2012: Scott Jehl, Filament Group, Inc. http://filamentgroup.github.com/Overthrow/license.txt */
 (function( w, undefined ){
-	
+
 	var doc = w.document,
 		docElem = doc.documentElement,
 		enabledClassName = "overthrow-enabled",
 
 		// Touch events are used in the polyfill, and thus are a prerequisite
 		canBeFilledWithPoly = "ontouchmove" in doc,
-		
+
 		// The following attempts to determine whether the browser has native overflow support
 		// so we can enable it but not polyfill
-		nativeOverflow = 
+		nativeOverflow =
 			// Features-first. iOS5 overflow scrolling property check - no UA needed here. thanks Apple :)
 			"WebkitOverflowScrolling" in docElem.style ||
 			// Test the windows scrolling property as well
 			"msOverflowStyle" in docElem.style ||
 			// Touch events aren't supported and screen width is greater than X
-			// ...basically, this is a loose "desktop browser" check. 
+			// ...basically, this is a loose "desktop browser" check.
 			// It may wrongly opt-in very large tablets with no touch support.
 			( !canBeFilledWithPoly && w.screen.width > 800 ) ||
 			// Hang on to your hats.
@@ -2480,7 +2480,7 @@ angular.module('myApp', ['mobile-angular-ui.core']);
 					webkit = ua.match( /AppleWebKit\/([0-9]+)/ ),
 					wkversion = webkit && webkit[1],
 					wkLte534 = webkit && wkversion >= 534;
-					
+
 				return (
 					/* Android 3+ with webkit gte 534
 					~: Mozilla/5.0 (Linux; U; Android 3.0; en-us; Xoom Build/HRI39) AppleWebKit/534.13 (KHTML, like Gecko) Version/4.0 Safari/534.13 */
@@ -2489,7 +2489,7 @@ angular.module('myApp', ['mobile-angular-ui.core']);
 					~: Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en-US) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.0.0 Mobile Safari/534.11+ */
 					ua.match( / Version\/([0-9]+)/ ) && RegExp.$1 >= 0 && w.blackberry && wkLte534 ||
 					/* Blackberry Playbook with webkit gte 534
-					~: Mozilla/5.0 (PlayBook; U; RIM Tablet OS 1.0.0; en-US) AppleWebKit/534.8+ (KHTML, like Gecko) Version/0.0.1 Safari/534.8+ */   
+					~: Mozilla/5.0 (PlayBook; U; RIM Tablet OS 1.0.0; en-US) AppleWebKit/534.8+ (KHTML, like Gecko) Version/0.0.1 Safari/534.8+ */
 					ua.indexOf( "PlayBook" ) > -1 && wkLte534 && !ua.indexOf( "Android 2" ) === -1 ||
 					/* Firefox Mobile (Fennec) 4 and up
 					~: Mozilla/5.0 (Mobile; rv:15.0) Gecko/15.0 Firefox/15.0 */
@@ -2498,7 +2498,7 @@ angular.module('myApp', ['mobile-angular-ui.core']);
 					~: Mozilla/5.0 (hp-tablet; Linux; hpwOS/3.0.0; U; en-US) AppleWebKit/534.6 (KHTML, like Gecko) wOSBrowser/233.48 Safari/534.6 TouchPad/1.0 */
 					ua.match( /wOSBrowser\/([0-9]+)/ ) && RegExp.$1 >= 233 && wkLte534 ||
 					/* Nokia Browser N8
-					~: Mozilla/5.0 (Symbian/3; Series60/5.2 NokiaN8-00/012.002; Profile/MIDP-2.1 Configuration/CLDC-1.1 ) AppleWebKit/533.4 (KHTML, like Gecko) NokiaBrowser/7.3.0 Mobile Safari/533.4 3gpp-gba 
+					~: Mozilla/5.0 (Symbian/3; Series60/5.2 NokiaN8-00/012.002; Profile/MIDP-2.1 Configuration/CLDC-1.1 ) AppleWebKit/533.4 (KHTML, like Gecko) NokiaBrowser/7.3.0 Mobile Safari/533.4 3gpp-gba
 					~: Note: the N9 doesn't have native overflow with one-finger touch. wtf */
 					ua.match( /NokiaBrowser\/([0-9\.]+)/ ) && parseFloat(RegExp.$1) === 7.3 && webkit && wkversion >= 533
 				);
@@ -2521,7 +2521,7 @@ angular.module('myApp', ['mobile-angular-ui.core']);
 
 	// Enable and potentially polyfill overflow
 	w.overthrow.set = function(){
-			
+
 		// If nativeOverflow or at least the element canBeFilledWithPoly, add a class to cue CSS that assumes overflow scrolling will work (setting height on elements and such)
 		if( nativeOverflow ){
 			w.overthrow.addClass();
@@ -2529,24 +2529,24 @@ angular.module('myApp', ['mobile-angular-ui.core']);
 
 	};
 
-	// expose polyfillable 
+	// expose polyfillable
 	w.overthrow.canBeFilledWithPoly = canBeFilledWithPoly;
 
 	// Destroy everything later. If you want to.
 	w.overthrow.forget = function(){
 
 		w.overthrow.removeClass();
-		
+
 	};
-		
+
 	// Expose overthrow API
 	w.overthrow.support = nativeOverflow ? "native" : "none";
-		
+
 })( this );
 
 /*! Overthrow. An overflow:auto polyfill for responsive design. (c) 2012: Scott Jehl, Filament Group, Inc. http://filamentgroup.github.com/Overthrow/license.txt */
 (function( w, undefined ){
-	
+
 	// Auto-init
 	w.overthrow.set();
 
@@ -2560,7 +2560,7 @@ angular.module('myApp', ['mobile-angular-ui.core']);
 	}
 
 	o.scrollIndicatorClassName = "overthrow";
-	
+
 	var doc = w.document,
 		docElem = doc.documentElement,
 		// o api
@@ -2575,11 +2575,11 @@ angular.module('myApp', ['mobile-angular-ui.core']);
 	o.closest = function( target, ascend ){
 		return !ascend && target.className && target.className.indexOf( scrollIndicatorClassName ) > -1 && target || o.closest( target.parentNode );
 	};
-		
+
 	// polyfill overflow
 	var enabled = false;
 	o.set = function(){
-			
+
 		set();
 
 		// If nativeOverflow or it doesn't look like the browser canBeFilledWithPoly, our job is done here. Exit viewport left.
@@ -2606,30 +2606,30 @@ angular.module('myApp', ['mobile-angular-ui.core']);
 		// From here down, all logic is associated with touch scroll handling
 			// elem references the overthrow element in use
 		var elem,
-			
+
 			// The last several Y values are kept here
 			lastTops = [],
-	
+
 			// The last several X values are kept here
 			lastLefts = [],
-			
+
 			// lastDown will be true if the last scroll direction was down, false if it was up
 			lastDown,
-			
+
 			// lastRight will be true if the last scroll direction was right, false if it was left
 			lastRight,
-			
+
 			// For a new gesture, or change in direction, reset the values from last scroll
 			resetVertTracking = function(){
 				lastTops = [];
 				lastDown = null;
 			},
-			
+
 			resetHorTracking = function(){
 				lastLefts = [];
 				lastRight = null;
 			},
-		
+
 			// On webkit, touch events hardly trickle through textareas and inputs
 			// Disabling CSS pointer events makes sure they do, but it also makes the controls innaccessible
 			// Toggling pointer events at the right moments seems to do the trick
@@ -2641,13 +2641,13 @@ angular.module('myApp', ['mobile-angular-ui.core']);
 					inputs[ i ].style.pointerEvents = val;
 				}
 			},
-			
+
 			// For nested overthrows, changeScrollTarget restarts a touch event cycle on a parent or child overthrow
 			changeScrollTarget = function( startEvent, ascend ){
 				if( doc.createEvent ){
 					var newTarget = ( !ascend || ascend === undefined ) && elem.parentNode || elem.touchchild || elem,
 						tEnd;
-							
+
 					if( newTarget !== elem ){
 						tEnd = doc.createEvent( "HTMLEvents" );
 						tEnd.initEvent( "touchend", true, true );
@@ -2658,7 +2658,7 @@ angular.module('myApp', ['mobile-angular-ui.core']);
 					}
 				}
 			},
-			
+
 			// Touchstart handler
 			// On touchstart, touchmove and touchend are freshly bound, and all three share a bunch of vars set by touchstart
 			// Touchend unbinds them again, until next time
@@ -2668,16 +2668,16 @@ angular.module('myApp', ['mobile-angular-ui.core']);
 				if( o.intercept ){
 					o.intercept();
 				}
-				
+
 				// Reset the distance and direction tracking
 				resetVertTracking();
 				resetHorTracking();
-				
+
 				elem = o.closest( e.target );
-					
+
 				if( !elem || elem === docElem || e.touches.length > 1 ){
 					return;
-				}			
+				}
 
 				setPointers( "none" );
 				var touchStartE = e,
@@ -2689,15 +2689,15 @@ angular.module('myApp', ['mobile-angular-ui.core']);
 					startX = e.touches[ 0 ].pageX,
 					scrollHeight = elem.scrollHeight,
 					scrollWidth = elem.scrollWidth,
-				
+
 					// Touchmove handler
 					move = function( e ){
-					
+
 						var ty = scrollT + startY - e.touches[ 0 ].pageY,
 							tx = scrollL + startX - e.touches[ 0 ].pageX,
 							down = ty >= ( lastTops.length ? lastTops[ 0 ] : 0 ),
 							right = tx >= ( lastLefts.length ? lastLefts[ 0 ] : 0 );
-							
+
 						// If there's room to scroll the current container, prevent the default window scroll
 						if( ( ty > 0 && ty < scrollHeight - height ) || ( tx > 0 && tx < scrollWidth - width ) ){
 							e.preventDefault();
@@ -2706,28 +2706,28 @@ angular.module('myApp', ['mobile-angular-ui.core']);
 						else {
 							changeScrollTarget( touchStartE );
 						}
-						
+
 						// If down and lastDown are inequal, the y scroll has changed direction. Reset tracking.
 						if( lastDown && down !== lastDown ){
 							resetVertTracking();
 						}
-						
+
 						// If right and lastRight are inequal, the x scroll has changed direction. Reset tracking.
 						if( lastRight && right !== lastRight ){
 							resetHorTracking();
 						}
-						
+
 						// remember the last direction in which we were headed
 						lastDown = down;
-						lastRight = right;							
-						
+						lastRight = right;
+
 						// set the container's scroll
 						elem.scrollTop = ty;
 						elem.scrollLeft = tx;
-					
+
 						lastTops.unshift( ty );
 						lastLefts.unshift( tx );
-					
+
 						if( lastTops.length > 3 ){
 							lastTops.pop();
 						}
@@ -2735,7 +2735,7 @@ angular.module('myApp', ['mobile-angular-ui.core']);
 							lastLefts.pop();
 						}
 					},
-				
+
 					// Touchend handler
 					end = function( e ){
 
@@ -2747,20 +2747,20 @@ angular.module('myApp', ['mobile-angular-ui.core']);
 						elem.removeEventListener( "touchmove", move, false );
 						elem.removeEventListener( "touchend", end, false );
 					};
-				
+
 				elem.addEventListener( "touchmove", move, false );
 				elem.addEventListener( "touchend", end, false );
 			};
-			
+
 		// Bind to touch, handle move and end within
 		doc.addEventListener( "touchstart", start, false );
 	};
-		
+
 })( this, this.overthrow );
 
 /**
  * This module will provide directives to create modals and overlays components.
- * 
+ *
  * @module mobile-angular-ui.components.modals
  */
 (function () {
@@ -2769,46 +2769,46 @@ angular.module('myApp', ['mobile-angular-ui.core']);
 
   /**
    * A directive to create modals and overlays components.
-   * 
-   * Modals are basically the same of Bootstrap 3 but you have to use uiState 
+   *
+   * Modals are basically the same of Bootstrap 3 but you have to use uiState
    * with `ngIf/uiIf` or `ngHide/uiHide` to `activate/dismiss` it.
-   * 
-   * By default both modals and overlay are made always showing up by 
-   * css rule `.modal {display:block}`, so you can use it with 
+   *
+   * By default both modals and overlay are made always showing up by
+   * css rule `.modal {display:block}`, so you can use it with
    * `ngAnimate` and other angular directives in a simpler way.
    *
    * Overlay are a style of modal that looks more native in mobile devices providing a blurred
    * overlay as background.
-   * 
+   *
    * You can create an overlay adding `.modal-overlay` class to a modal.
-   * 
+   *
    * ### Note
-   * 
-   * For modals and overlays to cover the entire page you have to attach them 
+   *
+   * For modals and overlays to cover the entire page you have to attach them
    * as child of `body` element. To achieve this from a view is a common use for
-   * `contentFor/yieldTo` directives contained from 
+   * `contentFor/yieldTo` directives contained from
    * [capture module](/docs/module:mobile-angular-ui/module:core/module:capture):
-   * 
+   *
    * ``` html
    * <body ng-app="myApp">
-   * 
+   *
    *   <!-- ... -->
    *   <!-- Modals and Overlays -->
    *   <div ui-yield-to="modals"></div>
-   * 
+   *
    * </body>
    * ```
-   * 
+   *
    * Then you can wrap your modals and overlays in `contentFor`:
-   * 
+   *
    * ``` html
    * <div ui-content-for="modals">
    * * <div class="modal"><!-- ... --></div>
    * </div>
    * ```
-   * 
+   *
    * **Example.** Create a Modal.
-   * 
+   *
    * ``` html
    * <div ui-content-for="modals">
    *   <div class="modal" ui-if="modal1" ui-state='modal1'>
@@ -2816,7 +2816,7 @@ angular.module('myApp', ['mobile-angular-ui.core']);
    *     <div class="modal-dialog">
    *       <div class="modal-content">
    *         <div class="modal-header">
-   *           <button class="close" 
+   *           <button class="close"
    *                   ui-turn-off="modal1">&times;</button>
    *           <h4 class="modal-title">Modal title</h4>
    *         </div>
@@ -2832,9 +2832,9 @@ angular.module('myApp', ['mobile-angular-ui.core']);
    *   </div>
    * </div>
    * ```
-   * 
+   *
    * **Example.** Create an Overlay.
-   * 
+   *
    * ``` html
    * <div ui-content-for="modals">
    *   <div class="modal modal-overlay" ui-if='modal2' ui-state='modal2'>
@@ -2857,7 +2857,7 @@ angular.module('myApp', ['mobile-angular-ui.core']);
    *   </div>
    * </div>
    * ```
-   * 
+   *
    * @directive modal
    * @restrict C
    */
@@ -2882,93 +2882,93 @@ angular.module('myApp', ['mobile-angular-ui.core']);
             });
             scope.$on('$destroy', function(){
               $rootElement.removeClass('has-modal-overlay');
-            });            
+            });
           }
         }
       };
   }]);
 }());
-/** 
- * @module mobile-angular-ui.components.navbars 
+/**
+ * @module mobile-angular-ui.components.navbars
  * @description
- * 
+ *
  * Bootstrap default navbars are awesome for responsive websites, but are not the
  * best with a small screen. Also fixed positioning is yet not an option to create
  * navbars standing in top or bottom of the screen.
- * 
+ *
  * Mobile Angular Ui offers an alternative to bootstrap navbars that is more
  * suitable for mobile.
- * 
+ *
  * It uses scrollable areas to avoid scroll issues. In the following figure you can
  * see the difference between fixed navbars and navbars with absolute positioning.
- * 
+ *
  * <figure class="full-width-figure">
  *   <img src="/assets/img/figs/fixed-overflow.png" alt=""/>
  * </figure>
- * 
+ *
  * Here is the basic markup to achieve this.
- * 
+ *
  * ``` html
  * <div class="app">
  *   <div class="navbar navbar-app navbar-absolute-top">
  *     <!-- ... -->
  *   </div>
- * 
+ *
  *   <div class="navbar navbar-app navbar-absolute-bottom">
  *     <!-- ... -->
  *   </div>
- * 
+ *
  *   <div class="app-body">
  *     <ng-view></ng-view>
  *   </div>
  * </div>
  * ```
- * 
+ *
  * As you can notice the base class is `.navbar-app` while the positioning is
  * obtained adding either `.navbar-absolute-top` or `.navbar-absolute-bottom`
  * class.
- * 
+ *
  * ### Mobile Navbar Layout
- * 
+ *
  * Top navbar in mobile design most of the times follows a clear pattern: a
  * centered title surrounded by one or two action buttons, the _back_ or the
  * _menu_ buttons are two common examples.
- * 
+ *
  * Twitter Bootstrap ships with a different arrangement of components for navbars
  * since they are supposed to host an horizontal navigation menu.
- * 
+ *
  * `.navbar-app` is specifically designed to support this different type of
  * `.interaction and arrangement.
- * 
+ *
  * Consider the following example:
- * 
+ *
  * ``` html
  * <div class="navbar navbar-app navbar-absolute-top">
- * 
+ *
  *   <div class="navbar-brand navbar-brand-center">
  *     Navbar Brand
  *   </div>
- * 
+ *
  *   <div class="btn-group pull-left">
  *     <div class="btn btn-navbar">
  *       Left Action
  *     </div>
  *   </div>
- * 
+ *
  *   <div class="btn-group pull-right">
  *     <div class="btn btn-navbar">
  *       Right Action
  *     </div>
  *   </div>
  * </div>
- * 
+ *
  * ```
- * 
+ *
  * `.navbar-brand-center` is a specialization of BS3's `.navbar-brand`.  It will
  * render the title centered and below the two button groups. Note that `.navbar-
  * brand-center` will position the title with absolute positioning ensuring that
  * it will never cover the buttons, which would cause interaction problems.
- * 
+ *
  */
 
 (function() {
@@ -2976,32 +2976,32 @@ angular.module('myApp', ['mobile-angular-ui.core']);
 
   var module = angular.module('mobile-angular-ui.components.navbars', []);
 
- /** 
+ /**
   * @directive navbarAbsoluteTop
   * @restrict C
   * @description
   *
   * Setup absolute positioned top navbar.
-  * 
+  *
   * ``` html
   *  <div class="navbar navbar-app navbar-absolute-top">
   *    <!-- ... -->
   *  </div>
-  * ``` 
+  * ```
   */
 
- /** 
+ /**
   * @directive navbarAbsoluteBottom
   * @restrict C
   * @description
-  * 
+  *
   * Setup absolute positioned bottom navbar.
-  * 
+  *
   * ``` html
   *  <div class="navbar navbar-app navbar-absolute-bottom">
   *    <!-- ... -->
   *  </div>
-  * ``` 
+  * ```
   */
   angular.forEach(['top', 'bottom'], function(side) {
     var directiveName = 'navbarAbsolute' + side.charAt(0).toUpperCase() + side.slice(1);
@@ -3022,32 +3022,32 @@ angular.module('myApp', ['mobile-angular-ui.core']);
   });
 
 })();
-/**  
+/**
  * @module mobile-angular-ui.components.scrollable
  * @description
- * 
+ *
  * One thing you'll always have to deal with approaching mobile web app development is scroll and `position:fixed` bugs.
- * 
+ *
  * Due to the lack of support in some devices fixed positioned elements may bounce or disappear during scroll. Also mobile interaction often leverages horizontal scroll eg. in carousels or sliders.
- * 
+ *
  * We use `overflow:auto` to create scrollable areas and solve any problems related to scroll.
- * 
+ *
  * Since `overflow:auto` is not always available in touch devices we use [Overthrow](http://filamentgroup.github.io/Overthrow/) to polyfill that.
- * 
+ *
  * Markup for any scrollable areas is as simple as:
- * 
+ *
  * ``` html
  * <div class="scrollable">
  *   <div class="scrollable-content">...</div>
  * </div>
  * ```
- * 
+ *
  * This piece of code will trigger a directive that properly setup a new `Overthrow` instance for the `.scrollable` node.
- * 
+ *
  * #### Headers and footers
- * 
+ *
  * `.scrollable-header/.scrollable-footer` can be used to add fixed header/footer to a scrollable area without having to deal with css height and positioning to avoid breaking scroll.
- * 
+ *
  * ``` html
  * <div class="scrollable">
  *   <div class="scrollable-header"><!-- ... --></div>
@@ -3055,31 +3055,31 @@ angular.module('myApp', ['mobile-angular-ui.core']);
  *   <div class="scrollable-footer"><!-- ... --></div>
  * </div>
  * ```
- * 
+ *
  * #### scrollTo
- * 
- * `.scrollable-content` controller exposes a `scrollTo` function: `scrollTo(offsetOrElement, margin)` 
- * 
+ *
+ * `.scrollable-content` controller exposes a `scrollTo` function: `scrollTo(offsetOrElement, margin)`
+ *
  * You have to require it in your directives to use it or obtain through `element().controller`:
- * 
+ *
  * ``` js
  * var elem = element(document.getElementById('myScrollableContent'));
  * var scrollableContentController = elem.controller('scrollableContent');
- * 
+ *
  * // - Scroll to top of containedElement
  * scrollableContentController.scrollTo(containedElement);
- * 
+ *
  * // - Scroll to top of containedElement with a margin of 10px;
  * scrollableContentController.scrollTo(containedElement, 10);
- * 
+ *
  * // - Scroll top by 200px;
  * scrollableContentController.scrollTo(200);
  * ```
- * 
+ *
  * #### `ui-scroll-bottom/ui-scroll-top`
- * 
+ *
  * You can use `ui-scroll-bottom/ui-scroll-top` directives handle that events and implement features like _infinite scroll_.
- * 
+ *
  * ``` html
  * <div class="scrollable">
  *   <div class="scrollable-content section" ui-scroll-bottom="loadMore()">
@@ -3094,7 +3094,7 @@ angular.module('myApp', ['mobile-angular-ui.core']);
  */
 (function() {
   'use strict';
-  var module = angular.module('mobile-angular-ui.components.scrollable', 
+  var module = angular.module('mobile-angular-ui.components.scrollable',
     ['mobile-angular-ui.core.touchmoveDefaults']);
 
 
@@ -3122,7 +3122,7 @@ angular.module('myApp', ['mobile-angular-ui.core']);
             allowUp = (scrollableContent.scrollTop > 0);
 
             allowDown = (scrollableContent.scrollTop < scrollableContent.scrollHeight - scrollableContent.clientHeight);
-            prevTop = null; 
+            prevTop = null;
             prevBot = null;
             lastY = getTouchY(event);
           };
@@ -3179,14 +3179,14 @@ angular.module('myApp', ['mobile-angular-ui.core']);
               var h1 = scrollable.scrollableContent.offsetHeight;
               $timeout(function() {
                 var h2 = scrollable.scrollableContent.offsetHeight;
-                // 
+                //
                 // if scrollableContent height is reduced in half second
                 // since an input got focus we assume soft keyboard is showing.
                 //
                 if (h1 > h2) {
-                  scrollable.scrollTo(elem, 10);  
+                  scrollable.scrollTo(elem, 10);
                 }
-              }, 500);              
+              }, 500);
             }
           });
         }
@@ -3198,7 +3198,7 @@ angular.module('myApp', ['mobile-angular-ui.core']);
    * @directive uiScrollTop
    * @restrict A
    *
-   * @param {expression} uiScrollTop The expression to be evaluated when scroll 
+   * @param {expression} uiScrollTop The expression to be evaluated when scroll
    * reaches top of element.
    */
 
@@ -3206,18 +3206,18 @@ angular.module('myApp', ['mobile-angular-ui.core']);
    * @directive uiScrollBottom
    * @restrict A
    *
-   * @param {expression} uiScrollBottom The expression to be evaluated when scroll 
+   * @param {expression} uiScrollBottom The expression to be evaluated when scroll
    * reaches bottom of element.
    */
   angular.forEach(
     {
       uiScrollTop: function(elem){
         return elem.scrollTop === 0;
-      }, 
+      },
       uiScrollBottom: function(elem){
         return elem.scrollHeight === elem.scrollTop + elem.clientHeight;
       }
-    }, 
+    },
     function(reached, directiveName){
       module.directive(directiveName, [function() {
         return {
@@ -3246,7 +3246,7 @@ angular.module('myApp', ['mobile-angular-ui.core']);
    * @directive uiScrollableFooter
    * @restrict C
    */
-  angular.forEach({Top: 'scrollableHeader', Bottom: 'scrollableFooter'}, 
+  angular.forEach({Top: 'scrollableHeader', Bottom: 'scrollableFooter'},
     function(directiveName, side) {
         module.directive(directiveName, [
           '$window',
@@ -3286,10 +3286,10 @@ Sidebars can be placed either in left side or right side adding respectively `.s
 ``` html
 <div class="sidebar sidebar-left">
   <div class="scrollable">
-    <h1 class="scrollable-header app-name">My App</h1>  
+    <h1 class="scrollable-header app-name">My App</h1>
     <div class="scrollable-content">
       <div class="list-group" ui-turn-off='uiSidebarLeft'>
-        <a class="list-group-item" href="#/link1">Link 1 
+        <a class="list-group-item" href="#/link1">Link 1
           <i class="fa fa-chevron-right pull-right"></i></a>
         <a class="list-group-item" href="#/link2">Link 2
           <i class="fa fa-chevron-right pull-right"></i></a>
@@ -3342,7 +3342,7 @@ By default sidebar are closed by clicking/tapping outside them.
         SharedState,
         bindOuterClick,
         $location
-      ) {  
+      ) {
         return {
           restrict: 'C',
           link: function (scope, elem, attrs) {
@@ -3372,14 +3372,14 @@ By default sidebar are closed by clicking/tapping outside them.
                 .removeClass(activeClass);
             });
 
-            var defaultActive = attrs.active !== undefined && attrs.active !== 'false';          
+            var defaultActive = attrs.active !== undefined && attrs.active !== 'false';
             SharedState.initialize(scope, stateName, {defaultValue: defaultActive});
 
             scope.$on('mobile-angular-ui.state.changed.' + stateName, function (e, active) {
               if (attrs.uiTrackAsSearchParam === '' || attrs.uiTrackAsSearchParam) {
                 $location.search(stateName, active || null);
               }
-              
+
               if (active) {
                 $rootElement
                   .addClass(visibleClass);
@@ -3402,13 +3402,13 @@ By default sidebar are closed by clicking/tapping outside them.
                   SharedState.turnOn(stateName);
                 } else {
                   SharedState.turnOff(stateName);
-                }                
+                }
               }
             });
 
             scope.$on('mobile-angular-ui.app.transitionend', function() {
               if (!SharedState.isActive(stateName)) {
-                $rootElement.removeClass(visibleClass);  
+                $rootElement.removeClass(visibleClass);
               }
             });
 
@@ -3425,10 +3425,10 @@ By default sidebar are closed by clicking/tapping outside them.
     return {
       restrict: 'C',
       link: function(scope, element) {
-        
+
         element.on('transitionend webkitTransitionEnd oTransitionEnd otransitionend', function() {
           $rootScope.$broadcast('mobile-angular-ui.app.transitionend');
-        });          
+        });
 
       }
     };
@@ -3436,43 +3436,43 @@ By default sidebar are closed by clicking/tapping outside them.
 }());
 /**
  * A module with just a directive to create a switch input component.
- * 
+ *
  * @module mobile-angular-ui.components.switch
  */
 (function() {
-  'use strict';  
+  'use strict';
   angular.module('mobile-angular-ui.components.switch', [])
 
-  /** 
+  /**
    * @directive uiSwitch
    * @restrict EA
    * @requires ngModel
    * @description
-   * 
-   * The `ui-switch` directive (not to be confused with `ng-switch`) lets 
+   *
+   * The `ui-switch` directive (not to be confused with `ng-switch`) lets
    * you create a toggle switch control bound to a boolean `ngModel` value.
-   * 
+   *
    * <figure class="full-width-figure">
    *   <img src="/assets/img/figs/switch.png" alt=""/>
    * </figure>
-   * 
+   *
    * It requires `ngModel`. It supports `ngChange` and `ngDisabled`.
-   * 
+   *
    * ``` html
    * <ui-switch  ng-model="invoice.paid"></ui-switch>
    * ```
-   * 
+   *
    * ``` html
    * <ui-switch  ng-model="invoice.paid" disabled></ui-switch>
    * ```
-   * 
+   *
    * ``` html
    * <ui-switch  ng-model="invoice.paid" ng-disabled='{{...}}'></ui-switch>
    * ```
-   * 
-   * Note that if `$drag` service from `mobile-angular-ui.gestures` is available 
+   *
+   * Note that if `$drag` service from `mobile-angular-ui.gestures` is available
    * `ui-switch` will support drag too.
-   * 
+   *
    * @param {expression} ngModel The model bound to this component.
    * @param {boolean} [disabled] Whether this component should be disabled.
    * @param {expression} [ngChange] An expression to be evaluated when model changes.
@@ -3488,12 +3488,12 @@ By default sidebar are closed by clicking/tapping outside them.
       },
       link: function(scope, elem, attrs) {
         elem.addClass('switch');
-        
+
         var disabled = attrs.disabled || elem.attr('disabled');
 
         var unwatchDisabled = scope.$watch(
-          function() { 
-            return attrs.disabled || elem.attr('disabled'); 
+          function() {
+            return attrs.disabled || elem.attr('disabled');
           },
           function(value) {
             if (!value || value === 'false' || value === '0') {
@@ -3519,7 +3519,7 @@ By default sidebar are closed by clicking/tapping outside them.
             elem.removeClass('active');
           }
         });
-        
+
         var isEnabled = function() {
           return !disabled;
         };
@@ -3567,7 +3567,7 @@ By default sidebar are closed by clicking/tapping outside them.
               }
               elem.on('click tap', clickCb);
             }
-          });  
+          });
         }
 
         elem.on('$destroy', function() {
@@ -3585,14 +3585,14 @@ By default sidebar are closed by clicking/tapping outside them.
 
 @description
 
-It has directives and services providing mobile friendly 
-components like navbars and sidebars. 
-It requires `mobile-angular-ui.base.css` 
+It has directives and services providing mobile friendly
+components like navbars and sidebars.
+It requires `mobile-angular-ui.base.css`
 in order to work properly.
 
 ## Standalone Usage
 
-Although `.components` module is required by `mobile-angular-ui` by default 
+Although `.components` module is required by `mobile-angular-ui` by default
 you can use it alone. Some submodules requires `mobile-angular-ui.core` to work,
 so be sure its sources are available.
 
@@ -3620,7 +3620,7 @@ angular.module('myApp', ['mobile-angular-ui.components']);
 This is the main angular module of `mobile-angular-ui` framework.
 
 By requiring this module you will have all `mobile-angular-ui.core`
-and `mobile-angular-ui.components` features required as well. 
+and `mobile-angular-ui.components` features required as well.
 
 ## Usage
 
