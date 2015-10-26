@@ -3561,7 +3561,7 @@ By default sidebar are closed by clicking/tapping outside them.
 
         elem.on('click tap', clickCb);
 
-        var unbind = angular.noop();
+        var unbind = angular.noop;
 
         if ($drag) {
           unbind = $drag.bind(handle, {
