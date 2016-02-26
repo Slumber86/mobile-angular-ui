@@ -2,8 +2,8 @@
 @module mobile-angular-ui.gestures.drag
 @description
 
-`mobile-angular-ui.gestures.drag` module exposes the `$drag` service that is used 
-to handle drag gestures. `$drag` service wraps [$touch](../module:touch) service adding
+`mobile-angular-ui.gestures.drag` module exposes the `$drag` service that is used
+to handle drag gestures. `$drag` service wraps [$touched](../module:touch) service adding
 CSS transforms reacting to `touchmove` events.
 
 ## Usage
@@ -33,11 +33,11 @@ $drag.bind(element, dragOptions, touchOptions);
 Where:
 
 - `transform` is a `function(element, currentTransform, touch) -> newTransform`
-   returning taking an `element`, its `currentTransform` and returning the `newTransform` 
+   returning taking an `element`, its `currentTransform` and returning the `newTransform`
    for the element in response to `touch`. See [$transform](../module:transform) for more.
    Default to `$drag.TRANSLATE_BOTH`.
 - `start`, `end`, `move`, `cancel` are optional callbacks responding to `drag` movement phases.
-- `dragInfo` is an extended version of `touchInfo` from [$touch](../module:touch), 
+- `dragInfo` is an extended version of `touchInfo` from [$touched](../module:touch),
   extending it with:
   - `originalTransform`: The [$transform](../module:transform) object relative to CSS transform before `$drag` is bound.
   - `originalRect`: The [Bounding Client Rect](https://developer.mozilla.org/en-US/docs/Web/API/Element.getBoundingClientRect) for bound element before any drag action.
@@ -47,7 +47,7 @@ Where:
   - `transform`: The current [$transform](../module:transform).
   - `reset`: A function restoring element to `originalTransform`.
   - `undo`: A function restoring element to `startTransform`.
-- `touchOptions` is an option object to be passed to underlying [`$touch`](../module:touch) service.
+- `touchOptions` is an option object to be passed to underlying [`$touched`](../module:touch) service.
 
 ### Predefined transforms
 
@@ -60,15 +60,15 @@ Where:
 - `$drag.TRANSLATE_RIGHT`: Transform translate following movement on positive x axis.
 - `$drag.TRANSLATE_VERTICAL`: Transform translate following movement on y axis.
 - `$drag.TRANSLATE_INSIDE`: Is a function and should be used like:
-   
+
    ``` js
-    { 
+    {
       transform: $drag.TRANSLATE_INSIDE(myElement)
     }
    ```
 
-   It returns a transform function that contains translate movement inside 
-   the passed element. 
+   It returns a transform function that contains translate movement inside
+   the passed element.
 
 ### `.ui-drag-move` style
 
@@ -80,13 +80,13 @@ fix common problems while dragging, specifically:
 - Disable transitions
 - Makes text unselectable
 
-**NOTE** Transitions are disabled cause they may introduce conflicts between `transition: transform` 
+**NOTE** Transitions are disabled cause they may introduce conflicts between `transition: transform`
  and `dragOptions.transform` function.
 
 They will be re-enabled after drag, and this can be used to achieve some graceful effects.
 
 If you need transition that does not involve transforms during movement you can apply them to an
-inner or wrapping element. 
+inner or wrapping element.
 
 ### Examples
 
@@ -96,7 +96,7 @@ inner or wrapping element.
 app.directive('dragMe', ['$drag', function($drag){
   return {
     controller: function($scope, $element) {
-      $drag.bind($element, 
+      $drag.bind($element,
         {
           transform: $drag.TRANSLATE_INSIDE($element.parent()),
           end: function(drag) {
@@ -123,7 +123,7 @@ app.directive('dragMe', ['$drag', function($drag){
    ])
 
   .provider('$drag', function() {
-    this.$get = ['$touch', '$transform', function($touch, $transform) {
+    this.$get = ['$touched', '$transform', function($touched, $transform) {
 
       // Add some css rules to be used while moving elements
       var style = document.createElement('style');
@@ -138,14 +138,14 @@ app.directive('dragMe', ['$drag', function($drag){
       // Makes text unselectable
       sheet.insertRule('html .ui-drag-move, html .ui-drag-move *{-webkit-touch-callout: none !important;-webkit-user-select: none !important;-khtml-user-select: none !important;-moz-user-select: none !important;-ms-user-select: none !important;user-select: none !important;}', 0);
 
-      style = sheet = null;   // we wont use them anymore so make 
+      style = sheet = null;   // we wont use them anymore so make
                              // their memory immediately claimable
 
       return {
 
-        // 
+        //
         // built-in transforms
-        // 
+        //
         NULL_TRANSFORM: function(element, transform) {
           return transform;
         },
@@ -194,7 +194,7 @@ app.directive('dragMe', ['$drag', function($drag){
 
         TRANSLATE_INSIDE: function(wrapperElementOrRectangle) {
           wrapperElementOrRectangle = wrapperElementOrRectangle.length ? wrapperElementOrRectangle[0] : wrapperElementOrRectangle;
-          
+
           return function(element, transform, touch) {
             element = element.length ? element[0] : element;
             var re = element.getBoundingClientRect();
@@ -202,7 +202,7 @@ app.directive('dragMe', ['$drag', function($drag){
             var tx, ty;
 
             if (re.width >= rw.width) {
-              tx = 0;   
+              tx = 0;
             } else {
               // compute translateX so that re.left and re.right will stay between rw.left and rw.right
               if (re.right + touch.stepX > rw.right) {
@@ -216,7 +216,7 @@ app.directive('dragMe', ['$drag', function($drag){
             }
 
             if (re.height >= rw.height) {
-              ty = 0;   
+              ty = 0;
             } else {
               if (re.bottom + touch.stepY > rw.bottom) {
                 ty = rw.bottom - re.bottom;
@@ -233,14 +233,14 @@ app.directive('dragMe', ['$drag', function($drag){
           };
         },
 
-        // 
+        //
         // bind function
-        // 
+        //
         bind: function($element, dragOptions, touchOptions) {
           $element = angular.element($element);
           dragOptions = dragOptions || {};
           touchOptions = touchOptions || {};
-          
+
           var startEventHandler = dragOptions.start,
               endEventHandler = dragOptions.end,
               moveEventHandler = dragOptions.move,
@@ -254,17 +254,17 @@ app.directive('dragMe', ['$drag', function($drag){
               rS;
 
             var moving = false;
-            
+
             var isMoving = function() {
               return moving;
             };
-            
+
             var cleanup = function() {
               moving = false;
               tS = rS = null;
               $element.removeClass('ui-drag-move');
             };
-            
+
             var reset = function() {
               $transform.set(domElement, tO);
             };
@@ -294,15 +294,15 @@ app.directive('dragMe', ['$drag', function($drag){
             };
 
             var onTouchMove = function(touch, event) {
-              // preventDefault no matter what 
+              // preventDefault no matter what
               // it is (ie. maybe html5 drag for images or scroll)
               event.preventDefault();
 
-              // $touch calls start on the first touch
+              // $touched calls start on the first touch
               // to ensure $drag.start is called only while actually
               // dragging and not for touches we will bind $drag.start
               // to the first time move is called
-              
+
               if (!isMoving()) { // drag start
                 setup();
                 if (startEventHandler) {
@@ -326,7 +326,7 @@ app.directive('dragMe', ['$drag', function($drag){
 
               // prevents outer swipes
               event.__UiSwipeHandled__ = true;
-              
+
               touch = createDragInfo(touch);
               cleanup();
 
@@ -337,7 +337,7 @@ app.directive('dragMe', ['$drag', function($drag){
 
             var onTouchCancel = function(touch, event) {
               if (!isMoving()) { return; }
-              
+
               touch = createDragInfo(touch);
               undo(); // on cancel movement is undoed automatically;
               cleanup();
@@ -347,7 +347,7 @@ app.directive('dragMe', ['$drag', function($drag){
               }
             };
 
-            return $touch.bind($element, 
+            return $touched.bind($element,
               {move: onTouchMove, end: onTouchEnd, cancel: onTouchCancel},
               touchOptions);
           } // ~ bind
@@ -358,39 +358,39 @@ app.directive('dragMe', ['$drag', function($drag){
 }());
 /**
  * A module providing swipe gesture services and directives.
- * 
- * @module mobile-angular-ui.gestures.swipe 
+ *
+ * @module mobile-angular-ui.gestures.swipe
  */
 (function() {
   'use strict';
 
-  var module = angular.module('mobile-angular-ui.gestures.swipe', 
+  var module = angular.module('mobile-angular-ui.gestures.swipe',
     ['mobile-angular-ui.gestures.touch']);
 
   /**
    * An adaptation of `ngTouch.$swipe`, it is basically the same despite of:
-   * 
-   * - It is based on [$touch](../module:touch)
+   *
+   * - It is based on [$touched](../module:touch)
    * - Swipes are recognized by touch velocity and direction
-   * - It does not require `ngTouch` thus is better compatible with fastclick.js 
+   * - It does not require `ngTouch` thus is better compatible with fastclick.js
    * - Swipe directives are nestable
    * - It allows to unbind
    * - It has only one difference in interface, and its about how to pass `pointerTypes`:
-   * 
+   *
    *   ``` js
    *     // ngTouch.$swipe
-   *     $swipe.bind(..., ['mouse', ... }); 
-   * 
+   *     $swipe.bind(..., ['mouse', ... });
+   *
    *     // mobile-angular-ui.gestures.swipe.$swipe
    *     $swipe.bind(..., pointerTypes: { mouse: { start: 'mousedown', ...} });
    *   ```
    *   This is due to the fact that the second parameter of `$swipe.bind` is destinated to options for
-   *   underlying `$touch` service.
-   *   
+   *   underlying `$touched` service.
+   *
    * @service $swipe
    * @as class
    */
-  module.factory('$swipe', ['$touch', function($touch) {
+  module.factory('$swipe', ['$touched', function($touched) {
     var VELOCITY_THRESHOLD = 500; // px/sec
     var MOVEMENT_THRESHOLD = 10; // px
     var TURNAROUND_MAX = 10; // px
@@ -398,7 +398,7 @@ app.directive('dragMe', ['$drag', function($drag){
     var abs = Math.abs;
 
     var defaultOptions = {
-      movementThreshold: MOVEMENT_THRESHOLD, // start to consider only if movement 
+      movementThreshold: MOVEMENT_THRESHOLD, // start to consider only if movement
                                              // exceeded MOVEMENT_THRESHOLD
       valid: function(t) {
         var absAngle = abs(t.angle);
@@ -407,7 +407,7 @@ app.directive('dragMe', ['$drag', function($drag){
         var validDistance = t.total - t.distance <= TURNAROUND_MAX,
             validAngle = absAngle <= ANGLE_THRESHOLD || absAngle >= 90 - ANGLE_THRESHOLD,
             validVelocity = t.averageVelocity >= VELOCITY_THRESHOLD;
-        
+
         return validDistance && validAngle && validVelocity;
       }
     };
@@ -417,14 +417,14 @@ app.directive('dragMe', ['$drag', function($drag){
        * Bind swipe gesture handlers for an element.
        *
        * ``` js
-       * var unbind = $swipe.bind(elem, { 
-       *   end: function(touch) { 
+       * var unbind = $swipe.bind(elem, {
+       *   end: function(touch) {
        *     console.log('Swiped:', touch.direction);
        *     unbind();
        *   }
        * });
        * ```
-       * 
+       *
        * **Swipes Detection**
        *
        * Before consider a touch to be a swipe Mobile Angular UI verifies that:
@@ -434,50 +434,50 @@ app.directive('dragMe', ['$drag', function($drag){
        * 3. Movement has a clear, non-ambiguous direction. So we can assume without error
        *    that underlying `touch.direction` is exactly the swipe direction. For that
        *    movement is checked against an `ANGLE_THRESHOLD`.
-       * 
+       *
        * @param  {Element|$element} element The element to observe for swipe gestures.
        * @param  {object} eventHandlers An object with handlers for specific swipe events.
        * @param  {function} [eventHandlers.start]  The callback for swipe start event.
        * @param  {function} [eventHandlers.end]  The callback for swipe end event.
        * @param  {function} [eventHandlers.move]  The callback for swipe move event.
        * @param  {function} [eventHandlers.cancel]  The callback for swipe cancel event.
-       * @param  {object} [options] Options to be passed to underlying [$touch.bind](../module:touch) function.
-       * 
+       * @param  {object} [options] Options to be passed to underlying [$touched.bind](../module:touch) function.
+       *
        * @returns {function} The unbind function.
-       * 
+       *
        * @method bind
        * @memberOf mobile-angular-ui.gestures.swipe~$swipe
        */
       bind: function(element, eventHandlers, options) {
         options = angular.extend({}, defaultOptions, options || {});
-        return $touch.bind(element, eventHandlers, options);
+        return $touched.bind(element, eventHandlers, options);
       }
     };
   }]);
-  
+
   /**
-   * Specify custom behavior when an element is swiped to the left on a touchscreen device. 
+   * Specify custom behavior when an element is swiped to the left on a touchscreen device.
    * A leftward swipe is a quick, right-to-left slide of the finger.
-   * 
+   *
    * @directive uiSwipeLeft
    * @param {expression} uiSwipeLeft An expression to be evaluated on leftward swipe.
    */
   /**
-   * Specify custom behavior when an element is swiped to the right on a touchscreen device. 
+   * Specify custom behavior when an element is swiped to the right on a touchscreen device.
    * A rightward swipe is a quick, left-to-right slide of the finger.
-   * 
+   *
    * @directive uiSwipeRight
    * @param {expression} uiSwipeRight An expression to be evaluated on rightward swipe.
    */
   /**
    * Alias for [uiSwipeLeft](#uiswipeleft).
-   * 
+   *
    * @directive ngSwipeLeft
    * @deprecated
    */
   /**
    * Alias for [uiSwipeRight](#uiswiperight).
-   * 
+   *
    * @directive ngSwipeRight
    * @deprecated
    */
@@ -494,7 +494,7 @@ app.directive('dragMe', ['$drag', function($drag){
                   if (!event.__UiSwipeHandled__) {
                     event.__UiSwipeHandled__ = true;
                     scope.$apply(function() {
-                      onSwipe(scope, {$touch: swipe});
+                      onSwipe(scope, {$touched: swipe});
                     });
                   }
                 }
@@ -522,55 +522,55 @@ app.directive('dragMe', ['$drag', function($drag){
  * ``` js
  * angular.module('myApp', ['mobile-angular-ui.gestures.touch']);
  * ```
- * 
- * Then you will be able to use the `$touch` service like that:
- * 
+ *
+ * Then you will be able to use the `$touched` service like that:
+ *
  * ``` js
- * var unbindFn = $touch.bind(element, {
+ * var unbindFn = $touched.bind(element, {
  *    start: function(touchInfo, e);
  *    move: function(touchInfo, e);
  *    end: function(touchInfo, e);
  *    cancel: function(touchInfo, e);
  * }, options);
  * ```
- * 
+ *
  * @module mobile-angular-ui.gestures.touch
  */
 (function() {
   'use strict';
   var module = angular.module('mobile-angular-ui.gestures.touch', []);
 
-  /** 
-   * `$touch` is an abstraction of touch event handling that works with 
+  /**
+   * `$touched` is an abstraction of touch event handling that works with
    * any kind of input devices.
-   * 
-   * It is intended for single touch only and provides 
+   *
+   * It is intended for single touch only and provides
    * extended infos about touch like: movement, direction, velocity, duration, and more.
-   * $touch service is intended as base to build any single-touch gesture handlers.
-   * 
+   * $touched service is intended as base to build any single-touch gesture handlers.
+   *
    * **Usage**
-   * 
+   *
    * ``` js
-   * var unbindFn = $touch.bind(element, {
+   * var unbindFn = $touched.bind(element, {
    *    start: function(touchInfo, e);
    *    move: function(touchInfo, e);
    *    end: function(touchInfo, e);
    *    cancel: function(touchInfo, e);
    * }, options);
    * ```
-   * 
-   * @service $touch
+   *
+   * @service $touched
    * @as class
    */
-  
+
 
   /**
-   * Configurable provider for `$touch` service
-   * @class  $touchProvider
+   * Configurable provider for `$touched` service
+   * @class  $touchedProvider
    * @ngdoc  provider
-   * @memberOf mobile-angular-ui.gestures.touch~$touch
+   * @memberOf mobile-angular-ui.gestures.touch~$touched
    */
-  module.provider('$touch', function() {
+  module.provider('$touched', function() {
 
     /*=====================================
     =            Configuration            =
@@ -579,7 +579,7 @@ app.directive('dragMe', ['$drag', function($drag){
     var VALID = function() {
       return true;
     };
-    
+
     var MOVEMENT_THRESHOLD = 1;
 
     var POINTER_EVENTS = {
@@ -606,7 +606,7 @@ app.directive('dragMe', ['$drag', function($drag){
     /**
      * Set default pointer events option.
      * Pointer Events option specifies a device-by-device map between device specific events and
-     * touch events. 
+     * touch events.
      *
      * The default Pointer Events Map is defined as:
      *
@@ -625,18 +625,18 @@ app.directive('dragMe', ['$drag', function($drag){
      *   }
      * };
      * ```
-     * 
+     *
      * Ie.
      *
      * ```
-     * app.config(function($touchProvider){
-     *   $touchProvider.setPointerEvents({ pen: {start: "pendown", end: "penup", move: "penmove" }});
+     * app.config(function($touchedProvider){
+     *   $touchedProvider.setPointerEvents({ pen: {start: "pendown", end: "penup", move: "penmove" }});
      * });
      * ```
      *
      * @name setPointerEvents
      * @param {object} pointerEvents The pointer events map object
-     * @memberOf mobile-angular-ui.gestures.touch~$touch.$touchProvider
+     * @memberOf mobile-angular-ui.gestures.touch~$touched.$touchedProvider
      */
     this.setPointerEvents = function(pointerEvents) {
       POINTER_EVENTS = pointerEvents;
@@ -645,22 +645,22 @@ app.directive('dragMe', ['$drag', function($drag){
 
     /**
      * Set default validity function for a touch.
-     * 
+     *
      * The default is defined as always true:
      *
      * ``` js
-     * $touchProvider.setValid(function(touch, event) {
+     * $touchedProvider.setValid(function(touch, event) {
      *   return true;
      * });
      * ```
-     * 
-     * @param {function} validityFunction The validity function. A function that takes two 
+     *
+     * @param {function} validityFunction The validity function. A function that takes two
      *                   arguments: `touchInfo` and `event`, and returns
      *                   a `Boolean` indicating wether the corresponding touch
-     *                   should be considered valid and its handlers triggered, 
-     *                   or considered invalid and its handlers be ignored.                  
+     *                   should be considered valid and its handlers triggered,
+     *                   or considered invalid and its handlers be ignored.
      * @method setValid
-     * @memberOf mobile-angular-ui.gestures.touch~$touch.$touchProvider
+     * @memberOf mobile-angular-ui.gestures.touch~$touched.$touchedProvider
      */
     this.setValid = function(fn) {
       VALID = fn;
@@ -673,15 +673,15 @@ app.directive('dragMe', ['$drag', function($drag){
      * Default is `1`.
      *
      * ie.
-     * 
+     *
      * ``` js
-     * $touchProvider.setMovementThreshold(120);
+     * $touchedProvider.setMovementThreshold(120);
      * ```
-     * 
+     *
      * @param {integer}  threshold The new treeshold.
-     * 
+     *
      * @method  setMovementThreshold
-     * @memberOf mobile-angular-ui.gestures.touch~$touch.$touchProvider
+     * @memberOf mobile-angular-ui.gestures.touch~$touched.$touchedProvider
      */
     this.setMovementThreshold = function(v) {
       MOVEMENT_THRESHOLD = v;
@@ -689,36 +689,36 @@ app.directive('dragMe', ['$drag', function($drag){
     /**
      * Set default sensitive area.
      *
-     * The sensitive area of a touch is the area of the screen inside what 
+     * The sensitive area of a touch is the area of the screen inside what
      * we consider a touch to be meaningful thus triggering its handlers.
      *
      * **NOTE:** if movement goes out the sensitive area the touch event is not cancelled,
-     * instead its handler are just ignored. 
-     * 
-     * By default sensitive area is defined as `ownerDocument` bounding rectangle 
+     * instead its handler are just ignored.
+     *
+     * By default sensitive area is defined as `ownerDocument` bounding rectangle
      * of the bound element.
      *
      * ie.
-     * 
+     *
      * ``` js
-     * $touchProvider.setSensitiveArea(function($element) {
+     * $touchedProvider.setSensitiveArea(function($element) {
      *   return $element[0].ownerDocument.documentElement.getBoundingClientRect();
      * });
      * ```
-     * 
-     * @param {function|Element|TextRectangle} sensitiveArea The new default sensitive area, 
-     *                                                       either static or as function 
+     *
+     * @param {function|Element|TextRectangle} sensitiveArea The new default sensitive area,
+     *                                                       either static or as function
      *                                                       taking an element and returning another
      *                                                       element or a [rectangle](https://developer.mozilla.org/en-US/docs/Web/API/Element.getBoundingClientRect).
      *
      * @method  setSensitiveArea
-     * @memberOf mobile-angular-ui.gestures.touch~$touch.$touchProvider
+     * @memberOf mobile-angular-ui.gestures.touch~$touched.$touchedProvider
      */
     this.setSensitiveArea = function(fnOrElementOrRect) {
       SENSITIVE_AREA = fnOrElementOrRect;
     };
 
-    // 
+    //
     // Shorthands for minification
     //
     var abs = Math.abs,
@@ -753,7 +753,7 @@ app.directive('dragMe', ['$drag', function($drag){
       return res.join(' ');
     };
 
-    var now = function() { 
+    var now = function() {
       return new Date();
     };
 
@@ -767,12 +767,12 @@ app.directive('dragMe', ['$drag', function($drag){
     };
 
     /**
-     * `TouchInfo` is an object containing the following extended informations about any touch 
+     * `TouchInfo` is an object containing the following extended informations about any touch
      * event.
-     * 
+     *
      * @property {string} type Normalized event type. Despite of pointer device is always one of `touchstart`, `touchend`, `touchmove`, `touchcancel`.
      * @property {Date} timestamp The time object corresponding to the moment this touch event happened.
-     * @property {integer} duration The difference between this touch event and the corresponding `touchstart`. 
+     * @property {integer} duration The difference between this touch event and the corresponding `touchstart`.
      * @property {float} startX X coord of related `touchstart`.
      * @property {float} startY Y coord of related `touchstart`.
      * @property {float} prevX X coord of previous `touchstart` or `touchmove`.
@@ -792,29 +792,29 @@ app.directive('dragMe', ['$drag', function($drag){
      * @property {float} totalY Total number of pixels covered by vertical, taking account of direction changes and turnarounds.
      * @property {string} direction The current prevalent direction for this touch, one of `LEFT`, `RIGHT`, `TOP`, `BOTTOM`.
      * @property {float} angle Angle in degree between x axis and the vector `[x, y]`, is `null` when no movement happens.
-     * 
+     *
      * @class TouchInfo
      * @ngdoc type
-     * @memberOf mobile-angular-ui.gestures.touch~$touch
+     * @memberOf mobile-angular-ui.gestures.touch~$touched
      */
 
     var buildTouchInfo = function(type, c, t0, tl) {
       // Compute values for new TouchInfo based on coordinates and previus touches.
       // - c is coords of new touch
-      // - t0 is first touch: useful to compute duration and distance (how far pointer 
+      // - t0 is first touch: useful to compute duration and distance (how far pointer
       //                    got from first touch)
       // - tl is last touch: useful to compute velocity and length (total length of the movement)
 
-      t0 = t0 || {}; 
-      tl = tl || {}; 
+      t0 = t0 || {};
+      tl = tl || {};
 
-      var // timestamps  
+      var // timestamps
           ts = now(), ts0 = t0.timestamp || ts, tsl = tl.timestamp || ts0,
           // coords
           x = c.x, y = c.y, x0 = t0.x || x, y0 = t0.y || y, xl = tl.x || x0, yl = tl.y || y0,
           // total movement
-          totalXl = tl.totalX || 0, totalYl = tl.totalY || 0, 
-          totalX = totalXl + abs(x - xl), totalY = totalYl + abs(y - yl), 
+          totalXl = tl.totalX || 0, totalYl = tl.totalY || 0,
+          totalX = totalXl + abs(x - xl), totalY = totalYl + abs(y - yl),
           total = len(totalX, totalY),
           // duration
           duration = timediff(ts, ts0),
@@ -835,7 +835,7 @@ app.directive('dragMe', ['$drag', function($drag){
           //  90 for y < 0 and x = 0
           //  180 for x < 0 and y = 0
           //  -90 for y > 0 and x = 0
-          //  
+          //
           //              -90°
           //               |
           //               |
@@ -845,7 +845,7 @@ app.directive('dragMe', ['$drag', function($drag){
           //               |
           //               |
           //              90°
-          //          
+          //
           angle = dx !== 0 || dy !== 0  ? atan2(dy, dx) * (180 / Math.PI) : null;
           angle = angle === -180 ? 180 : angle;
 
@@ -866,7 +866,7 @@ app.directive('dragMe', ['$drag', function($drag){
 
         velocity: v,
         averageVelocity: tv,
-        
+
         distance: d, // distance from start
         distanceX: dx,
         distanceY: dy,
@@ -885,21 +885,21 @@ app.directive('dragMe', ['$drag', function($drag){
     ======================================*/
 
     this.$get = [function() {
-      
+
       return {
         /**
          *
          * Bind touch handlers for an element.
          *
          * ``` js
-         * var unbind = $touch.bind(elem, { 
-         *   end: function(touch) { 
+         * var unbind = $touched.bind(elem, {
+         *   end: function(touch) {
          *     console.log('Avg Speed:', touch.averageVelocity);
          *     unbind();
          *   }
          * });
          * ```
-         * 
+         *
          * @param  {Element|$element} element The element to bound to.
          * @param  {object} eventHandlers An object with handlers for specific touch events.
          * @param  {function} [eventHandlers.start]  The callback for `touchstart` event.
@@ -909,21 +909,21 @@ app.directive('dragMe', ['$drag', function($drag){
          * @param  {object} [options] Options.
          * @param  {integer} [options.movementThreshold] Amount of pixels of movement before start to trigger `touchmove` handlers.
          * @param  {function} [options.valid] Validity function. A `function(TouchInfo, event)⟶boolean` deciding if a touch should be handled or ignored.
-         * @param  {function|Element|TextRectangle} [options.sensitiveArea] A [Bounding Client Rect](https://developer.mozilla.org/en-US/docs/Web/API/Element.getBoundingClientRect) or an element 
+         * @param  {function|Element|TextRectangle} [options.sensitiveArea] A [Bounding Client Rect](https://developer.mozilla.org/en-US/docs/Web/API/Element.getBoundingClientRect) or an element
          *                                                                  or a function that takes the bound element and returns one of the previous.
          *                                                                  Sensitive area define bounduaries to release touch when movement is outside.
-         * @param  {array} [options.pointerTypes] Pointer types to handle. An array of pointer types that is intended to be 
-         *                                        a subset of keys from default pointer events map (see `$touchProvider.setPointerEvents`).
+         * @param  {array} [options.pointerTypes] Pointer types to handle. An array of pointer types that is intended to be
+         *                                        a subset of keys from default pointer events map (see `$touchedProvider.setPointerEvents`).
          *
          * @returns {function} The unbind function.
-         * 
-         * @memberOf mobile-angular-ui.gestures.touch~$touch
+         *
+         * @memberOf mobile-angular-ui.gestures.touch~$touched
          */
         bind: function($element, eventHandlers, options) {
 
-          // ensure element to be an angular element 
+          // ensure element to be an angular element
           $element = angular.element($element);
-          
+
           options = options || {};
           // uses default pointer types in case of none passed
           var pointerTypes = options.pointerTypes || POINTER_TYPES,
@@ -957,20 +957,20 @@ app.directive('dragMe', ['$drag', function($drag){
             return !!t0;
           };
 
-          // 
+          //
           // Callbacks
-          // 
+          //
 
           // on touchstart
           var onTouchStart = function(event) {
             // don't handle multi-touch
-            if (event.touches && event.touches.length > 1) { return; } 
+            if (event.touches && event.touches.length > 1) { return; }
             tl = t0 = buildTouchInfo('touchstart', getCoordinates(event));
             $movementTarget.on(moveEvents, onTouchMove);
             $movementTarget.on(endEvents, onTouchEnd);
             if (cancelEvents) { $movementTarget.on(cancelEvents, onTouchCancel); }
             if (startEventHandler) {
-              startEventHandler(t0, event); 
+              startEventHandler(t0, event);
             }
           };
 
@@ -986,18 +986,18 @@ app.directive('dragMe', ['$drag', function($drag){
           // on touchMove
           var onTouchMove = function(event) {
             // don't handle multi-touch
-            if (event.touches && event.touches.length > 1) { return; } 
+            if (event.touches && event.touches.length > 1) { return; }
 
             if (!isActive()) { return; }
-            
+
             var coords = getCoordinates(event);
 
-            // 
+            //
             // wont fire outside sensitive area
-            // 
+            //
             var mva = typeof sensitiveArea === 'function' ? sensitiveArea($element) : sensitiveArea;
             mva = mva.length ? mva[0] : mva;
-            
+
             var mvaRect = mva instanceof Element ? mva.getBoundingClientRect() : mva;
 
             if (coords.x < mvaRect.left || coords.x > mvaRect.right || coords.y < mvaRect.top || coords.y > mvaRect.bottom){ return; }
@@ -1007,14 +1007,14 @@ app.directive('dragMe', ['$drag', function($drag){
                 totalY = t.totalY;
 
             tl = t;
-    
+
             if (totalX < movementThreshold && totalY < movementThreshold) {
               return;
             }
 
             if (isValid(t, event)) {
               if (event.cancelable === undefined || event.cancelable) {
-                event.preventDefault();              
+                event.preventDefault();
               }
               if (moveEventHandler) {
                 moveEventHandler(t, event);
@@ -1025,16 +1025,16 @@ app.directive('dragMe', ['$drag', function($drag){
           // on touchEnd
           var onTouchEnd = function(event) {
             // don't handle multi-touch
-            if (event.touches && event.touches.length > 1) { return; } 
+            if (event.touches && event.touches.length > 1) { return; }
 
             if (!isActive()) { return; }
             var t = angular.extend({}, tl, {type: 'touchend'});
             if (isValid(t, event)) {
               if (event.cancelable === undefined || event.cancelable) {
-                event.preventDefault();              
+                event.preventDefault();
               }
               if (endEventHandler) {
-                setTimeout(function() { // weird workaround to avoid 
+                setTimeout(function() { // weird workaround to avoid
                                         // delays with dom manipulations
                                         // inside the handler
                   endEventHandler(t, event);
@@ -1067,8 +1067,8 @@ app.directive('dragMe', ['$drag', function($drag){
 @module mobile-angular-ui.gestures.transform
 @description
 
-`mobile-angular-ui.gestures.transform` provides the `$transform` service is designed 
-with the specific aim to provide a cross-browser way to interpolate CSS 3d transform 
+`mobile-angular-ui.gestures.transform` provides the `$transform` service is designed
+with the specific aim to provide a cross-browser way to interpolate CSS 3d transform
 without having to deal with CSS Matrix, and being able to take into account any previous
 unknown transform already applied to an element.
 
@@ -1086,7 +1086,7 @@ Or standalone
 angular.module('myApp', ['mobile-angular-ui.gestures.transform']);
 ```
 
-Say we have an element with applyed css: 
+Say we have an element with applyed css:
 
 ``` html
 <div class='myelem'></div>
@@ -1111,12 +1111,12 @@ Then you can use `$transform` like this:
 
 #### `$transform.fromCssMatrix(cssMatrixString) -> transform`
 
-Returns a decomposition of the transform matrix `cssMatrixString`. 
+Returns a decomposition of the transform matrix `cssMatrixString`.
 NOTE: 2d matrices are translated to 3d matrices before any other operation.
 
 #### `$transform.toCss(decomposedTransform)`
 
-Recompose a css string from `decomposedTransform`. 
+Recompose a css string from `decomposedTransform`.
 
 Transforms are recomposed as a composition of:
 
@@ -1160,12 +1160,12 @@ rotateZ
 skewXY
 skewXZ
 skewYZ
-``` 
+```
 
 */
 (function() {
   'use strict';
-  
+
   var module = angular.module('mobile-angular-ui.gestures.transform', []);
 
   module.factory('$transform', function(){
@@ -1180,7 +1180,7 @@ skewYZ
         styleProperty,
         prefixes = ['', 'webkit', 'Moz', 'O', 'ms'],
         d = document.createElement('div');
-    
+
     for (var i = 0; i < prefixes.length; i++) {
       var prefix = prefixes[i];
       if ( (prefix + 'Perspective') in d.style ) {
@@ -1240,7 +1240,7 @@ skewYZ
     };
 
     var determinant3x3 = function(a1, a2, a3, b1, b2, b3, c1, c2, c3) {
-      return a1 * determinant2x2(b2, b3, c2, c3) - b1 * determinant2x2(a2, a3, c2, c3) + c1 * determinant2x2(a2, a3, b2, b3);  
+      return a1 * determinant2x2(b2, b3, c2, c3) - b1 * determinant2x2(a2, a3, c2, c3) + c1 * determinant2x2(a2, a3, b2, b3);
     };
 
     var determinant4x4 = function(m) {
@@ -1275,7 +1275,7 @@ skewYZ
       var res = adjoint(m),
           det = determinant4x4(m);
       if (abs(det) < SMALL_NUMBER) { return false; }
-      
+
       for (var i = 0; i < 4; i++) {
           for (var j = 0; j < 4; j++) {
               res[i][j] = res[i][j] / det;
@@ -1346,7 +1346,7 @@ skewYZ
 
     var decompose = function(mat) {
       var result = {}, localMatrix = cloneMatrix(mat), i, j;
-      
+
       // Normalize the matrix.
       if (localMatrix[3][3] === 0) {
         return false;
@@ -1388,7 +1388,7 @@ skewYZ
           result.perspectiveY = perspectivePoint[1];
           result.perspectiveZ = perspectivePoint[2];
           result.perspectiveW = perspectivePoint[3];
-          
+
           // Clear the perspective partition
           localMatrix[0][3] = localMatrix[1][3] = localMatrix[2][3] = 0;
           localMatrix[3][3] = 1;
@@ -1408,7 +1408,7 @@ skewYZ
 
       // Now get scale and shear.
       var row = [[],[],[]], pdum3;
-      
+
       for (i = 0; i < 3; i++) {
           row[i][0] = localMatrix[i][0];
           row[i][1] = localMatrix[i][1];
@@ -1439,12 +1439,12 @@ skewYZ
       v3Scale(row[2], 1.0);
       result.skewXZ /= result.scaleZ;
       result.skewYZ /= result.scaleZ;
-      
+
       // At this point, the matrix (in rows[]) is orthonormal.
       // Check for a coordinate system flip.  If the determinant
       // is -1, then negate the matrix and the scaling factors.
       pdum3 = v3Cross(row[1], row[2]);
-      
+
       if (v3Dot(row[0], pdum3) < 0) {
           for (i = 0; i < 3; i++) {
               result.scaleX *= -1;
@@ -1490,10 +1490,10 @@ skewYZ
         var M = [[1,0,0,0],[0,1,0,0],[0,0,1,0],[0,0,0,1]];
 
         // Just returns identity in case no transform is setup for the element
-        if (tr && tr !== 'none') { 
+        if (tr && tr !== 'none') {
           var elems = tr.split('(')[1].split(')')[0].split(',').map(Number);
 
-          // Is a 2d transform: matrix(a, b, c, d, tx, ty) is a shorthand 
+          // Is a 2d transform: matrix(a, b, c, d, tx, ty) is a shorthand
           // for matrix3d(a, b, 0, 0, c, d, 0, 0, 0, 0, 1, 0, tx, ty, 0, 1)
           if (tr.match(/^matrix\(/)) {
             M[0][0] = elems[0];
@@ -1516,9 +1516,9 @@ skewYZ
       },
 
       toCss: function(t) {
-        // 
+        //
         // Transforms are recomposed as a composition of:
-        // 
+        //
         // matrix3d(1,0,0,0, 0,1,0,0, 0,0,1,0, perspective[0], perspective[1], perspective[2], perspective[3])
         // translate3d(translation[0], translation[1], translation[2])
         // rotateX(rotation[0]) rotateY(rotation[1]) rotateZ(rotation[2])
@@ -1526,8 +1526,8 @@ skewYZ
         // matrix3d(1,0,0,0, 0,1,0,0, skew[1],0,1,0, 0,0,0,1)
         // matrix3d(1,0,0,0, skew[0],1,0,0, 0,0,1,0, 0,0,0,1)
         // scale3d(scale[0], scale[1], scale[2])
-        // 
-        
+        //
+
         var perspective = [
           fCom(t.perspectiveX),
           fCom(t.perspectiveY),
@@ -1535,12 +1535,12 @@ skewYZ
           fCom(t.perspectiveW, 1)
         ],
         translate = [
-          fPx(t.translateX), 
-          fPx(t.translateY), 
+          fPx(t.translateX),
+          fPx(t.translateY),
           fPx(t.translateZ)
         ],
         scale = [
-          fCom(t.scaleX), 
+          fCom(t.scaleX),
           fCom(t.scaleY),
           fCom(t.scaleZ)
         ],
@@ -1554,7 +1554,7 @@ skewYZ
           fCom(t.skewXZ),
           fCom(t.skewYZ)
         ];
-        
+
         return [
           'matrix3d(1,0,0,0,0,1,0,0,0,0,1,0,' + perspective.join(',') + ')',
           'translate3d(' + translate.join(',') + ')',
@@ -1566,13 +1566,13 @@ skewYZ
         ].join(' ');
       },
 
-      // 
+      //
       // Returns a decomposition of the transform matrix applied
       // to `e`;
-      //  
+      //
       // NOTE: 2d matrices are translated to 3d matrices
       //       before any other operation.
-      //       
+      //
       get: function(e) {
         return this.fromCssMatrix(getElementTransformProperty(e));
       },
@@ -1580,7 +1580,7 @@ skewYZ
       // Recompose a transform from decomposition `t` and apply it to element `e`
       set: function(e, t) {
         var str = (typeof t === 'string') ? t : this.toCss(t);
-        setElementTransformProperty(e, str);  
+        setElementTransformProperty(e, str);
       }
     };
   });
@@ -1597,10 +1597,10 @@ It does not need any `.css` to work.
 
 <div class="alert alert-warning">
 <p>
-<i class="fa fa-warning"></i> This module will not work with `ngTouch` cause it is intended, among offering more features, to be a drop-in replacement for it.  
+<i class="fa fa-warning"></i> This module will not work with `ngTouch` cause it is intended, among offering more features, to be a drop-in replacement for it.
 </p>
 <p>
-Be aware that `ngTouch` is still not playing well with `fastclick.js` and its usage with `mobile-angular-ui` is currently discouraged anyway.  
+Be aware that `ngTouch` is still not playing well with `fastclick.js` and its usage with `mobile-angular-ui` is currently discouraged anyway.
 </p>
 </div>
 
